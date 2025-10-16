@@ -6,11 +6,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-       path('', include('eco.urls')),
-    path('eco/', include('eco.urls', namespace='eco')),
+    path('', include('eco.urls')),  # Keep only this one - URLs at root level
     path('users/', include('users.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    
 ]
 
 if settings.DEBUG:

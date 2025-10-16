@@ -10,9 +10,9 @@ urlpatterns = [
     path('', views.home, name='home'),
     
     # ==================== PRODUCTS ====================
-    path('products/', views.ProductListView.as_view(), name='product-list'),
+     path('products/', views.browse_books, name='product-list'),
     path('product/<slug:slug>/', views.EcoDetail.as_view(), name='product-detail'),
-    
+
     # ==================== CART & ORDER MANAGEMENT ====================
     path('order-summary/', views.order_summary, name='order-summary'),
     path('add-to-cart/<slug:slug>/', views.add_to_cart, name='add-to-cart'),

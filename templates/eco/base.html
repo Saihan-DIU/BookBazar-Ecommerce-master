@@ -598,25 +598,25 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">BookBazar</div>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/eco/product/">Browse Books</a></li>
-                <li><a href="/eco/order-summary/">Cart</a></li>
-                <li><a href="/eco/account/">Account</a></li>
-                <li><a href="/eco/contact/">Contact</a></li>
-                <!-- Dark Mode Toggle -->
-                <li>
-                    <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
-                        <span class="dark-mode-icon">🌙</span>
-                        <span class="light-mode-icon">☀️</span>
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </nav>
+ <nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">BookBazar</div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/products/">Browse Books</a></li>
+            <li><a href="/order-summary/">Cart</a></li>
+            <li><a href="/account/">Account</a></li>
+            <li><a href="/contact/">Contact</a></li>
+            <!-- Dark Mode Toggle -->
+            <li>
+                <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
+                    <span class="dark-mode-icon">🌙</span>
+                    <span class="light-mode-icon">☀️</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+</nav>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -626,7 +626,7 @@
             <div class="hero-content">
                 <h1>Welcome to BookBazar</h1>
                 <p>Discover the future of reading with our curated collection of books</p>
-                <a href="/eco/product/" class="btn btn-primary">Explore Now</a>
+                <a href="/products/" class="btn btn-primary">Explore Now</a>
             </div>
         </section>
 
@@ -635,7 +635,7 @@
             <h2 class="section-title">Book Categories</h2>
             <div class="categories-grid">
                 <!-- Fiction & Literature -->
-                <div class="category-card" onclick="location.href='/eco/categories/fiction/'">
+                <div class="category-card" onclick="location.href='/categories/fiction/'">
                     <div class="category-image">
                         <img src="https://i.pinimg.com/originals/b0/52/6d/b0526d8ca7d5b6202bc0b22481258421.jpg" alt="Fiction & Literature">
                         <span class="category-icon">📖</span>
@@ -648,7 +648,7 @@
                 </div>
 
                 <!-- Science & Technology -->
-                <div class="category-card" onclick="location.href='/eco/categories/science/'">
+                <div class="category-card" onclick="location.href='/categories/science/'">
                     <div class="category-image">
                         <img src="https://cdn.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_640.jpg" alt="Science & Technology">
                         <span class="category-icon">🔬</span>
@@ -661,7 +661,7 @@
                 </div>
 
                 <!-- Science Fiction -->
-                <div class="category-card" onclick="location.href='/eco/categories/sci-fi/'">
+                <div class="category-card" onclick="location.href='/categories/sci-fi/'">
                     <div class="category-image">
                         <img src="https://cdn.pixabay.com/photo/2018/08/15/13/10/galaxy-3608029_640.jpg" alt="Science Fiction">
                         <span class="category-icon">🚀</span>
@@ -676,7 +676,7 @@
 
             <!-- View All Categories Button - NOW WITH SHORTER GAP -->
             <div class="category-actions">
-                <a href="/eco/categories/" class="btn btn-outline">View All Categories</a>
+                <a href="/categories/" class="btn btn-outline">View All Categories</a>
             </div>
         </section>
 

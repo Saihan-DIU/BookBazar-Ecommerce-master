@@ -59,6 +59,37 @@ def home(request):
     }
     return render(request, 'eco/base.html', context)
 
+# ==================== BROWSE BOOKS VIEW ====================
+
+def browse_books(request):
+    """Browse all books page with search functionality"""
+    # Get all available books, ordered by newest first
+    queryset = Book.objects.filter(is_available=True).select_related('author', 'category').order_by('-created_at')
+    
+    # Pagination - 12 books per page
+    paginator = Paginator(queryset, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Get categories for sidebar/filter (if needed)
+    categories = Category.objects.all()
+    
+    # Get cart count for the navbar
+    cart_count = 0
+    if request.user.is_authenticated:
+        order = Order.objects.filter(user=request.user, ordered=False).first()
+        if order:
+            cart_count = order.items.count()
+    
+    context = {
+        'queryset': page_obj,
+        'page_obj': page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+        'categories': categories,
+        'cart_count': cart_count,
+    }
+    return render(request, 'eco/browse_books.html', context)
+
 # ==================== CART FUNCTIONALITY ====================
 
 @login_required
