@@ -6,10 +6,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+       path('', include('eco.urls')),
     path('eco/', include('eco.urls', namespace='eco')),
-    # path('blog/', include('blog.urls')),  # REMOVE OR COMMENT THIS LINE
     path('users/', include('users.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    
 ]
 
 if settings.DEBUG:

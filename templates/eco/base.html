@@ -389,11 +389,44 @@
             font-size: 0.9rem;
         }
 
+        /* UPDATED: Book Pricing Styles - Matching your category section */
+        .book-pricing {
+            margin: 0.5rem 0;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            color: var(--gray);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
         .book-price {
+            color: var(--primary);
             font-size: 1.3rem;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1rem;
+        }
+
+        .discount-badge {
+            background: #dc2626;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .sale-price {
+            color: #dc2626;
+            font-size: 1.2rem;
+            font-weight: bold;
         }
 
         /* Newsletter Section */
@@ -648,7 +681,7 @@
         </section>
 
         <!-- Featured Books Section - NOW CLOSER TO CATEGORIES -->
-          <section class="featured-section">
+        <section class="featured-section">
             <h2 class="section-title">Featured Books</h2>
             <div class="books-grid">
                 {% for book in featured_books %}
@@ -667,14 +700,22 @@
                                 Unknown Author
                             {% endif %}
                         </p>
+                        
+                        <!-- UPDATED: Price Section - Matching your category section styling -->
                         <div class="book-pricing">
-                            {% if book.discount_price %}
-                                <span class="price-original">${{ book.price }}</span>
-                                <span class="book-price">${{ book.discount_price }}</span>
+                            {% if book.is_on_sale %}
+                                <div class="price-container">
+                                    <span class="sale-price">${{ book.discount_price }}</span>
+                                    <span class="price-original">${{ book.price }}</span>
+                                    <span class="discount-badge">
+                                        -{{ book.discount_percentage }}%
+                                    </span>
+                                </div>
                             {% else %}
                                 <span class="book-price">${{ book.price }}</span>
                             {% endif %}
                         </div>
+                        
                         <a href="{{ book.get_absolute_url }}" class="btn">View Details</a>
                     </div>
                 </div>
