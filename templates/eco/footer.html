@@ -1,0 +1,118 @@
+{% load static %}
+<!-- Advanced Footer Section -->
+<footer class="advanced-footer">
+    <div class="footer-main">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Company Info -->
+                <div class="footer-column company-info">
+                    <div class="footer-logo">
+                        <a href="/">
+                            <img src="{% static 'https://www.shutterstock.com/image-vector/bookstore-book-shop-logo-web-260nw-710357626.jpg' %}" alt="EcoStore" class="logo-img">
+                        </a>
+                    </div>
+                    <p class="company-description">
+                        Your trusted partner for quality products. We deliver excellence with every order.
+                    </p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Gulshan 2 , Dhaka (1200) </span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span><a href="tel:+11234567890">01610052468</a></span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span><a href="mailto:diusaihancse@gmail.comm">diusaihancse@gmail.com</a></span>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+
+     
+
+                <!-- Customer Service -->
+                <div class="footer-column">
+                    <h4 class="footer-title">Customer Service</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'eco:contact' %}"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                        <li><a href="{% url 'eco:faq' %}"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Shipping Info</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Returns & Exchanges</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Size Guide</a></li>
+                    </ul>
+                </div>
+
+                <!-- Policies -->
+                <div class="footer-column">
+                    <h4 class="footer-title">Policies</h4>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Refund Policy</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Shipping Policy</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Cookie Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="footer-column newsletter">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p class="newsletter-desc">Subscribe to get special offers, free giveaways, and exclusive deals.</p>
+                    <form class="newsletter-form" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="email" name="email" class="newsletter-input" placeholder="Enter your email" required>
+                            <button type="submit" class="newsletter-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="payment-methods">
+                        <p class="payment-title">We Accept:</p>
+                        <div class="payment-icons">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-amex"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                            <i class="fab fa-cc-apple-pay"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="footer-bottom-content">
+                <div class="copyright">
+                    <p>&copy; 2024 EcoStore. All rights reserved. | Designed with <i class="fas fa-heart"></i> for amazing shopping experiences</p>
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#">Sitemap</a>
+                    <span class="separator">|</span>
+                    <a href="#">Accessibility</a>
+                    <span class="separator">|</span>
+                    <a href="#">Careers</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <div class="back-to-top">
+        <button id="back-to-top-btn" class="back-to-top-btn" title="Back to Top">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+    </div>
+</footer>

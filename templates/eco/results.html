@@ -1,0 +1,212 @@
+{% extends "eco/base.html" %}
+{% load static %}
+{% load mptt_tags %}
+
+{% block content %}
+
+
+  <body>
+
+    <div id="all">
+      <div id="content">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12">
+              <!-- breadcrumb-->
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'eco:EcoIndex' %}">Home</a></li>
+                  <li aria-current="page" class="breadcrumb-item active">products</li>
+                </ol>
+              </nav>
+            </div>
+            
+            <div class="col-lg-3">
+              <!--
+              *** MENUS AND FILTERS ***
+              _________________________________________________________
+              -->
+              <div class="card sidebar-menu mb-4">
+                <div class="card-header">
+                  <h3 class="h4 card-title">Categories</h3>
+
+                </div>
+
+                <div class="card-body">
+                  <ul class="nav nav-pills flex-column category-menu">
+            
+                    <li>
+
+                      {% recursetree category %}
+
+                           {% if node.categories.count %}
+                           <a href="{% url 'eco:CategoryDetail' node.slug %}" class="nav-link">{{node.name}}
+                              <span style="color: #6c757d;">[{{node.categories.count}}]</span> </a>
+                            
+                              {% else %}
+                              <a href="{% url 'eco:CategoryDetail' node.slug %}" class="nav-link">{{node.name}}
+                                </a>
+                           {% endif %}
+                   
+            
+                
+                     
+                      <ul class="list-unstyled">
+                        {% if not node.is_leaf_node %}
+      
+                        <h6 style="font-size:x-small; font-style: italic;">
+                          <ul class="list-unstyled"><a href="{{get_absolute_url}}">{{children}}</a></ul>
+                        </h6>
+            
+                        {% endif %}
+                      </ul>
+
+                   
+                      {% endrecursetree %}
+
+                  </li>
+                   
+                    
+                  </ul>
+                </div>  
+                    
+
+              </div>
+
+
+              <div class="banner"><a href="#"><img src="{% static 'eco/img/banner.jpg' %}" alt="sales 2014" class="img-fluid"></a></div>
+            </div>
+
+            <div class="col-lg-9">
+
+
+                {% if queryset %}
+  
+              <div class="row products">
+    
+
+                {% for item in queryset  %}
+  
+
+                <div class="col-lg-4 col-md-6">
+                  <div class="product">
+
+                    <div class="flip-container">
+                      <div class="flipper">
+                        <div class="front"><a href="{{item.get_absolute_url}}"><img src="{{item.image.url}}" alt="" class="img-fluid"></a></div>
+                        <div class="back"><a href="{{item.get_absolute_url}}"><img src="{{item.image.url}}" alt="" class="img-fluid"></a></div>
+                      </div>
+                    </div><a href="{{item.get_absolute_url}}" class="invisible"><img src="{{item.image.url}}" alt="" class="img-fluid"></a>
+
+                    <div class="text">
+                      <h3><a href="{{item.get_absolute_url}}">{{item.title}}</a></h3>
+                      <p class="price"> 
+
+                       {% if item.discount_price %}
+                  
+                        <del>${{item.discount_price}}</del>
+                        
+                        {% endif %}
+                        
+                        ${{item.price}}
+     
+                      </p>
+                      <p class="buttons">
+                        
+                        <a href="{{item.get_absolute_url}}" class="btn btn-outline-secondary">View detail</a>             
+                        <a href="{{item.get_add_to_cart_url}}" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>Add to cart
+                        </a>
+                     
+                        
+                      </p>
+                    </div>
+
+
+
+                  <!-- /.text-->
+                  
+                  {% if item.label1 %}
+                  <div class="ribbon sale">
+                    <div class="theribbon">{{item.get_label1_display}}</div>
+                    <div class="ribbon-background"></div>
+                  </div>
+                  <!-- /.ribbon-->
+                                   
+                  {% endif %}
+
+                  {% if item.label2 %}
+                    
+                 
+                  <div class="ribbon new">
+                    <div class="theribbon">{{item.get_label2_display}}</div>
+                    <div class="ribbon-background"></div>
+                  </div>
+                  {% endif %}
+                  <!-- /.ribbon-->
+                  {% if item.label3 %}
+               
+                  <div class="ribbon gift">
+                    <div class="theribbon">{{item.get_label3_display}}</div>
+                    <div class="ribbon-background"></div>
+                  </div>
+                       
+                  {% endif %}
+                  <!-- /.ribbon-->
+
+                  </div>
+                  <!-- /.product -->
+                </div>
+                                
+                {% endfor %}
+
+
+              </div>
+                {% else %}
+
+        <h2 style="color:red">Products and price are not available based on your search criteria</h2>
+              {% endif %}
+  
+            </div>
+
+            <!-- /.col-lg-9-->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+  </body>
+
+  
+{% endblock content %}
+
+
+
+
+<div class="pages">
+
+  <p class="loadMore"><a href="#" class="btn btn-primary btn-lg"><i class="fa fa-chevron-down"></i> Load more</a></p>
+  <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+
+    <ul class="pagination">
+
+      <li class="page-item"><a href="#" aria-label="Previous" class="page-link"><span aria-hidden="true">«</span><span class="sr-only">Previous</span></a></li>
+
+
+
+      <li class="page-item active"><a href="#" class="page-link">1</a></li>
+      <li class="page-item"><a href="#" class="page-link">2</a></li>
+      <li class="page-item"><a href="#" class="page-link">3</a></li>
+      <li class="page-item"><a href="#" class="page-link">4</a></li>
+      <li class="page-item"><a href="#" class="page-link">5</a></li>
+      <li class="page-item"><a href="#" aria-label="Next" class="page-link"><span aria-hidden="true">»</span><span class="sr-only">Next</span></a></li>
+
+      
+    </ul>
+
+
+  </nav>
+
+</div>
+

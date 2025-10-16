@@ -1,0 +1,56 @@
+{% load static %}
+
+<div class="pages">
+    {% if page_obj.has_next %}
+
+    <p class="loadMore"><a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary btn-lg"><i class="fa fa-chevron-down"></i> Load more</a></p>
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+
+  {% else %}
+
+  <p class="loadMore"><a href="" class="btn btn-primary btn-lg"><i class="fa fa-chevron-down"></i> No more items </a></p>
+  <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+
+      {% endif %}   
+
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+
+          <a href="?page=1" class="page-link"><span aria-hidden="true" >&laquo;</span></a>
+        </li>
+
+        <li class="page-item">
+          <a href="?page={{ page_obj.previous_page_number }}" class="page-link">&lt;</a>
+
+        </li>   
+        {% endif %}
+        
+        {% for n in page_obj.paginator.page_range %}
+          {% if page_obj.number == n %}
+            <li class="page-item active">
+                <span class="page-link">{{n}}</span>
+            </li>
+          {% elif n > page_obj.number|add:'-3' and n < page_obj.number|add:'3' %}
+            <li class="page-item">
+              <a href="?page={{ n }}" class="page-link">{{ n }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a href="?page={{ page_obj.next_page_number }}" class="page-link">&gt;</a>
+          </li>
+          <li class="page-item">
+            <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Next" class="page-link">
+
+                <span aria-hidden="true">&raquo;</span></a>
+
+          </li>
+          {% endif %}   
+    </ul>
+
+    </nav>
+
+  </div>

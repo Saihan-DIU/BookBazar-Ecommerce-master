@@ -1,0 +1,16 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Book
+From: khanrafi099@gmail.com
+To: admin@example.com
+Date: Wed, 26 Aug 2020 12:24:36 -0000
+Message-ID: <159844467625.5404.12351315601259230683@ghost>
+
+<div class="col-md-6">
+                      <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="name" class="form-control" required id="id_email"> 
+                      </div>
+                    </div>
+-------------------------------------------------------------------------------

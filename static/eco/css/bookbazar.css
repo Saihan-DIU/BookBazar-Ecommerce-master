@@ -1,0 +1,364 @@
+/* BookBazar - Futuristic Bookstore Styles */
+:root {
+    --primary-gold: #FFD700;
+    --deep-navy: #0A1931;
+    --rich-burgundy: #8B0000;
+    --soft-cream: #F5F5DC;
+    --dark-charcoal: #2C2C2C;
+    --light-silver: #E8E8E8;
+    --accent-teal: #20B2AA;
+    --gradient-primary: linear-gradient(135deg, #0A1931 0%, #1E3A8A 100%);
+    --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    --shadow-elegant: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Global Styles */
+body {
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    color: var(--soft-cream);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+.bookbazar-container {
+    background: rgba(10, 25, 49, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    margin: 20px auto;
+    padding: 30px;
+    box-shadow: var(--shadow-elegant);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+/* Header & Navigation */
+.bookbazar-navbar {
+    background: var(--gradient-primary) !important;
+    border-bottom: 3px solid var(--primary-gold);
+    box-shadow: var(--shadow-elegant);
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-family: 'Georgia', serif;
+    font-size: 2.5rem !important;
+    font-weight: bold;
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+.navbar-nav .nav-link {
+    color: var(--soft-cream) !important;
+    font-weight: 500;
+    margin: 0 10px;
+    padding: 10px 20px !important;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar-nav .nav-link:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-gold);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.navbar-nav .nav-link:hover::before {
+    width: 80%;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(10, 25, 49, 0.9), rgba(10, 25, 49, 0.9)), 
+                url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+    background-size: cover;
+    background-position: center;
+    padding: 100px 0;
+    text-align: center;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    opacity: 0.8;
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: bold;
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: var(--soft-cream);
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+/* Book Cards - Futuristic Design */
+.book-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.book-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.book-card:hover::before {
+    left: 100%;
+}
+
+.book-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-gold);
+}
+
+.book-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.book-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.book-author {
+    color: var(--light-silver);
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.book-price {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--primary-gold);
+    margin: 15px 0;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: var(--light-silver);
+    font-size: 1rem;
+    margin-left: 10px;
+}
+
+/* Buttons */
+.btn-bookbazar {
+    background: var(--gradient-gold);
+    color: var(--deep-navy) !important;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-bookbazar:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
+    background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+}
+
+.btn-outline-bookbazar {
+    background: transparent;
+    color: var(--primary-gold);
+    border: 2px solid var(--primary-gold);
+    padding: 10px 25px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-bookbazar:hover {
+    background: var(--primary-gold);
+    color: var(--deep-navy);
+    transform: translateY(-2px);
+}
+
+/* Categories Section */
+.categories-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.category-title {
+    color: var(--primary-gold);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+}
+
+.category-item {
+    padding: 15px 20px;
+    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-gold);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.category-item:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateX(10px);
+}
+
+/* Search & Filters */
+.search-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 25px;
+    padding: 15px 25px;
+    color: var(--soft-cream);
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+/* Badges & Labels */
+.badge-bestseller {
+    background: var(--gradient-gold);
+    color: var(--deep-navy);
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 2;
+}
+
+.badge-new {
+    background: var(--accent-teal);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+}
+
+/* Footer */
+.bookbazar-footer {
+    background: var(--gradient-primary);
+    color: var(--soft-cream);
+    padding: 50px 0 20px;
+    margin-top: 50px;
+    border-top: 3px solid var(--primary-gold);
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .book-card {
+        margin-bottom: 20px;
+    }
+    
+    .navbar-brand {
+        font-size: 2rem !important;
+    }
+}
+
+/* Loading Animation */
+.loading-spinner {
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    border-top: 3px solid var(--primary-gold);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

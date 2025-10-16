@@ -1,0 +1,157 @@
+<!-- templates/eco/navbar.html -->
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="logo">
+      <a href="{% url 'eco:home' %}" style="text-decoration: none; background: linear-gradient(45deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        BookBazar
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="{% url 'eco:home' %}">Home</a></li>
+      <li><a href="{% url 'eco:product-list' %}">Products</a></li>
+      <li>
+        <a href="{% url 'eco:order-summary' %}">
+          Cart
+          <span class="cart-badge"> {{ cart_count }} </span>
+        </a>
+      </li>
+      
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'eco:customer-account' %}">My Account</a></li>
+        <li><a href="{% url 'logout' %}">Logout ({{ user.username }})</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'users:register' %}">Register</a></li>
+      {% endif %}
+      
+      <li><a href="{% url 'eco:contact' %}">Contact</a></li>
+
+      <!-- Dark Mode Toggle -->
+      <li>
+        <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
+          <span class="dark-mode-icon">🌙</span>
+          <span class="light-mode-icon">☀️</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<style>
+  /* Navbar Styles Only */
+  .navbar {
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 2rem;
+    font-weight: 800;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border: 1px solid transparent;
+  }
+
+  .nav-links a:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  }
+
+  .dark-mode-btn {
+    background: var(--primary);
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  }
+
+  .dark-mode-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  }
+
+  .light-mode-icon {
+    display: none;
+  }
+
+  [data-theme="dark"] .dark-mode-icon {
+    display: none;
+  }
+
+  [data-theme="dark"] .light-mode-icon {
+    display: inline;
+  }
+
+  .cart-badge {
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+  }
+
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .nav-links {
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .dark-mode-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+  }
+</style>

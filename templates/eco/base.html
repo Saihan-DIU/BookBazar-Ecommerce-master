@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookBazar - Modern Book Store</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #1f2937;
+            --light: #ffffff;
+            --gray-light: #f8fafc;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --card-bg: #1e293b;
+            --nav-bg: rgba(15, 23, 42, 0.95);
+            --border: #334155;
+            --gray-light: #1e293b;
+            --dark: #f8fafc;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .dark-mode-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .dark-mode-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .light-mode-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .dark-mode-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .light-mode-icon {
+            display: inline;
+        }
+
+        /* Enhanced Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            background: var(--bg-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Enhanced Hero Section */
+        .hero {
+            text-align: center;
+            padding: 8rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(29, 50, 54, 0.9) 0%, rgba(139, 92, 246, 0.8) 100%),
+                        url('https://cdn.pixabay.com/photo/2014/10/14/20/14/library-488690_640.jpg') center/cover;
+            color: white;
+        }
+
+        [data-theme="dark"] .hero {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(139, 92, 246, 0.8) 100%),
+                        url('https://cdn.pixabay.com/photo/2014/10/14/20/14/library-488690_640.jpg') center/cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            line-height: 1.6;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero .btn {
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        /* Enhanced Categories Section */
+        .categories-section {
+            padding: 4rem 0 2rem 0; /* Reduced bottom padding */
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, var(--text-color), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border-radius: 3px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .category-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 0;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .category-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        .category-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .category-image img {
+            transform: scale(1.1);
+        }
+
+        .category-card .category-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .category-card .category-icon {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .category-content {
+            padding: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .category-description {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .category-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        /* Category Actions - SHORTER GAP */
+        .category-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem; /* Reduced from 3rem to 2rem */
+            width: 100%;
+        }
+
+        /* Featured Books Section - SHORTER GAP */
+        .featured-section {
+            padding: 2rem 0 4rem 0; /* Reduced top padding from 4rem to 2rem */
+            background: var(--gray-light);
+            border-radius: 20px;
+            margin: 1rem 0; /* Reduced margin from 3rem to 1rem */
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .book-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .book-author {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .book-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Newsletter Section */
+        .newsletter-section {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 20px;
+            margin: 3rem 0;
+        }
+
+        .newsletter-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-description {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(45deg, var(--light), #f8fafc);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-links a {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .hero {
+                padding: 5rem 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+                margin-top: 120px;
+            }
+            
+            .dark-mode-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .category-card {
+                padding: 0;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">BookBazar</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/eco/product/">Browse Books</a></li>
+                <li><a href="/eco/order-summary/">Cart</a></li>
+                <li><a href="/eco/account/">Account</a></li>
+                <li><a href="/eco/contact/">Contact</a></li>
+                <!-- Dark Mode Toggle -->
+                <li>
+                    <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
+                        <span class="dark-mode-icon">🌙</span>
+                        <span class="light-mode-icon">☀️</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% block content %}
+        <!-- Hero Banner Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome to BookBazar</h1>
+                <p>Discover the future of reading with our curated collection of books</p>
+                <a href="/eco/product/" class="btn btn-primary">Explore Now</a>
+            </div>
+        </section>
+
+        <!-- Book Categories Section -->
+        <section class="categories-section">
+            <h2 class="section-title">Book Categories</h2>
+            <div class="categories-grid">
+                <!-- Fiction & Literature -->
+                <div class="category-card" onclick="location.href='/eco/categories/fiction/'">
+                    <div class="category-image">
+                        <img src="https://i.pinimg.com/originals/b0/52/6d/b0526d8ca7d5b6202bc0b22481258421.jpg" alt="Fiction & Literature">
+                        <span class="category-icon">📖</span>
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">Fiction & Literature</h3>
+                        <p class="category-description">Explore captivating stories, novels, and literary masterpieces from around the world.</p>
+                        <span class="category-count">250+ Books</span>
+                    </div>
+                </div>
+
+                <!-- Science & Technology -->
+                <div class="category-card" onclick="location.href='/eco/categories/science/'">
+                    <div class="category-image">
+                        <img src="https://cdn.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_640.jpg" alt="Science & Technology">
+                        <span class="category-icon">🔬</span>
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">Science & Technology</h3>
+                        <p class="category-description">Latest discoveries, programming guides, AI, and cutting-edge technology books.</p>
+                        <span class="category-count">180+ Books</span>
+                    </div>
+                </div>
+
+                <!-- Science Fiction -->
+                <div class="category-card" onclick="location.href='/eco/categories/sci-fi/'">
+                    <div class="category-image">
+                        <img src="https://cdn.pixabay.com/photo/2018/08/15/13/10/galaxy-3608029_640.jpg" alt="Science Fiction">
+                        <span class="category-icon">🚀</span>
+                    </div>
+                    <div class="category-content">
+                        <h3 class="category-title">Science Fiction</h3>
+                        <p class="category-description">Futuristic worlds, space adventures, and mind-bending speculative fiction.</p>
+                        <span class="category-count">120+ Books</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View All Categories Button - NOW WITH SHORTER GAP -->
+            <div class="category-actions">
+                <a href="/eco/categories/" class="btn btn-outline">View All Categories</a>
+            </div>
+        </section>
+
+        <!-- Featured Books Section - NOW CLOSER TO CATEGORIES -->
+          <section class="featured-section">
+            <h2 class="section-title">Featured Books</h2>
+            <div class="books-grid">
+                {% for book in featured_books %}
+                <div class="book-card">
+                    {% if book.cover_image %}
+                        <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="book-cover">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x400/cccccc/666666?text=No+Cover" alt="No cover available" class="book-cover">
+                    {% endif %}
+                    <div class="book-info">
+                        <h3 class="book-title">{{ book.title }}</h3>
+                        <p class="book-author">
+                            {% if book.author %}
+                                {{ book.author.name }}
+                            {% else %}
+                                Unknown Author
+                            {% endif %}
+                        </p>
+                        <div class="book-pricing">
+                            {% if book.discount_price %}
+                                <span class="price-original">${{ book.price }}</span>
+                                <span class="book-price">${{ book.discount_price }}</span>
+                            {% else %}
+                                <span class="book-price">${{ book.price }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{{ book.get_absolute_url }}" class="btn">View Details</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="no-books" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                    <p>No featured books available. Please add some books from the admin panel.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter-section">
+            <div class="newsletter-content">
+                <h2 class="newsletter-title">Stay Updated</h2>
+                <p class="newsletter-description">Subscribe to our newsletter for the latest book releases, exclusive deals, and reading recommendations.</p>
+                <form class="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </section>
+        {% endblock %}
+    </div>
+
+    <!-- Modern Scripts -->
+    <script>
+        // Dark Mode Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const currentTheme = localStorage.getItem('theme');
+            
+            // Check for saved theme or prefer-color-scheme
+            if (currentTheme === 'dark' || 
+                (currentTheme === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+            
+            // Toggle dark mode
+            darkModeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                
+                if (currentTheme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) {
+                    if (e.matches) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                    }
+                }
+            });
+
+            // Add floating animation to cards on hover
+            const cards = document.querySelectorAll('.book-card, .category-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('floating');
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('floating');
+                });
+            });
+
+            // Add smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

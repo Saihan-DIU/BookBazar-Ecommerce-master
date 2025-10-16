@@ -1,0 +1,131 @@
+<!-- templates/eco/base_common.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}BookBazar{% endblock %}</title>
+
+    <!-- Only include essential CSS for other pages -->
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-light: #3b82f6;
+        --secondary: #10b981;
+        --accent: #8b5cf6;
+        --dark: #1f2937;
+        --light: #ffffff;
+        --gray-light: #f8fafc;
+        --gray: #6b7280;
+        --border: #e5e7eb;
+        --bg-color: #ffffff;
+        --text-color: #1f2937;
+        --card-bg: #ffffff;
+        --nav-bg: rgba(255, 255, 255, 0.95);
+      }
+
+      [data-theme="dark"] {
+        --bg-color: #0f172a;
+        --text-color: #f8fafc;
+        --card-bg: #1e293b;
+        --nav-bg: rgba(15, 23, 42, 0.95);
+        --border: #334155;
+        --gray-light: #1e293b;
+        --dark: #f8fafc;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+
+      body {
+        background: var(--bg-color);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: all 0.3s ease;
+      }
+
+      .main-content {
+        margin-top: 80px;
+        padding: 2rem;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* Basic card style for other pages */
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        transition: all 0.3s ease;
+      }
+
+      .btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          padding: 1rem;
+          margin-top: 100px;
+        }
+      }
+
+      {% block extra_css %}{% endblock %}
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <!-- Include the same navbar -->
+    {% include 'eco/navbar.html' %}
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    <!-- Dark Mode Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const currentTheme = localStorage.getItem("theme");
+
+        if (currentTheme === "dark" || 
+            (currentTheme === null && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+
+        darkModeToggle.addEventListener("click", function () {
+          const currentTheme = document.documentElement.getAttribute("data-theme");
+          if (currentTheme === "light") {
+            document.documentElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+          } else {
+            document.documentElement.setAttribute("data-theme", "light");
+            localStorage.setItem("theme", "light");
+          }
+        });
+      });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

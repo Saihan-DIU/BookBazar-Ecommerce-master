@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- <div>
+        {% for slide in slider  %}
+        <li>
+           {{slide.title}}
+           {{slide.plot}}
+
+           <img src="{{slide.banner.url}}" alt="">
+           <h6>
+               category
+           </h6>
+           {{slide.category}}
+              
+          
+        </li>
+        {% endfor %}
+    </div> -->
+    <div style="text-align: left;">
+        <h3>list of movie</h3>
+        {% for movie in whole %}
+    
+            <li>
+                {{movie}}
+            </li>
+        
+        {% endfor %}
+    </div>
+
+
+    <div style="text-align: right;">
+        <h3>Recent movie</h3>
+        {% for year in year  %}
+
+        <li>
+            {{year}}
+        </li>
+        {% endfor %}
+    </div>
+    
+    <div>
+        <h3>filter movie</h3>
+        {% for get in get %}
+        <li>
+            {{get}}
+            
+        </li>
+        {% endfor %}
+    </div>
+    
+    <div>
+        <h3>get_queryset</h3>
+        {% for some in some %}
+        <li>
+            {{some}}
+            
+        </li>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: right;">
+        <h4>
+            manytomany
+        </h4>
+        {% for tv in tv %}
+        
+        <li>
+            {{tv.movie }}
+        </li>
+          
+        {% endfor %}
+    </div>
+    
+    
+</body>
+</html>

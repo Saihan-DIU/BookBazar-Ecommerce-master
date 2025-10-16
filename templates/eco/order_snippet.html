@@ -1,0 +1,103 @@
+{% load static %}
+
+
+
+          <!-- /.col-lg-9-->
+          <div class="col-lg-3">
+            <div id="order-summary" class="box">
+              <div class="box-header">
+                <h3 class="mb-0">Order summary</h3>
+              </div>
+              <p class="text-muted">Shipping and additional costs are calculated based on the values you have entered.</p>
+              <div class="table-responsive">
+                <table class="table">
+
+
+                  <tbody>
+                    {% for order in order %}
+
+
+                    <tr>
+                      <td>Order subtotal</td>
+                    
+                      {% if order.get_total %}
+                      <th>${{ order.get_total|floatformat:2 }}</th>    
+                      {% endif %}     
+                     
+
+                    </tr>
+                    <tr>
+                      <td>Shipping</td>
+                      <th>$0.00</th>
+                    </tr>
+
+                    
+                    <tr>
+                      <td>Coupon</td>
+                      {% if order.coupon %}
+                          <th class="text-success">-${{ order.coupon.amount }}</th> 
+                      {% endif %}
+                    </tr>
+
+
+                    <tr class="total">
+                      <td>Total</td>
+                  
+                      {% if order.get_total_full %}
+                      <th>${{ order.get_total_full|floatformat:2 }}</th>
+                                     
+                      {% endif %}                          
+                    
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+
+                </table>
+              </div>
+            </div>
+
+
+            <div class="box">
+   {% for order in order %}
+
+          {% if order.coupon %}
+
+                    <div class="box-header text-success">
+                      <h4 class="mb-0">Coupon code</h4>
+                      <h5 class="font-italic">
+                        <small class="text-success text-uppercase">{{ order.coupon.code }}</small>
+                      </h5>
+                      
+                    </div>
+            
+          {% else %}
+
+                    <div class="box-header">
+                      <h4 class="mb-0 text-warning">Coupon code</h4>
+                  
+                    </div>
+
+           {% endif %}
+
+
+              <p class="text-muted">If you have a coupon code, please enter it in the box below.</p>
+
+              {% if DISPLAY_COUPON_FORM %}
+              <form action="{% url 'eco:add-coupon' %}" method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                  {{ couponform.code }}
+                  <!-- <input type="text" class="form-control"> -->
+                  <span class="input-group-append">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-gift"></i></button></span>
+                </div>
+                <!-- /input-group-->
+              </form>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+
+          </div>
+          <!-- /.col-md-3-->
