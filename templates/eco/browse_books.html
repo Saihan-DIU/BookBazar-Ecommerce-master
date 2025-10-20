@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Books - BookBazar</title>
-       {% load static %}
+    {% load static %}
+    
+    <!-- Add CSRF Token -->
+    {% csrf_token %}
+    
     <style>
         :root {
             --primary: #2563eb;
@@ -469,6 +473,52 @@
             margin-top: 3rem;
         }
 
+        /* Cart Message Styles */
+        .cart-message {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+            font-weight: 500;
+            max-width: 300px;
+        }
+
+        .cart-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .cart-error {
+            background: #ef4444;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .nav-container {
@@ -530,6 +580,13 @@
             .search-button {
                 border-radius: 20px;
             }
+
+            .cart-message {
+                top: 80px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
         }
     </style>
 </head>
@@ -541,7 +598,7 @@
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
             <li><a href="/products/" style="background: var(--primary); color: white;">Browse Books</a></li>
-            <li><a href="/order-summary/">Cart</a></li>
+            <li><a href="/order-summary/">Cart <span class="cart-count">{% if cart_count %}({{ cart_count }}){% else %}(0){% endif %}</span></a></li>
             <li><a href="/account/">Account</a></li>
             <li><a href="/contact/">Contact</a></li>
             <!-- Dark Mode Toggle -->
@@ -642,25 +699,25 @@
                 </div>
                 
                 <!-- Action Buttons -->
-             <div class="action-buttons">
-    <a href="{% url 'eco:product-detail' item.slug %}" class="btn">
-        View Details
-    </a>
-    
-    {% if item.is_available %}
-        {% if user.is_authenticated %}
-            <a href="{% url 'eco:add-to-cart' item.slug %}" class="btn btn-secondary">
-                Add to Cart
-            </a>
-        {% else %}
-            <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn btn-danger">
-                Login to Buy
-            </a>
-        {% endif %}
-    {% else %}
-        <button disabled class="btn">Out of Stock</button>
-    {% endif %}
-</div>
+                <div class="action-buttons">
+                    <a href="{% url 'eco:product-detail' item.slug %}" class="btn">
+                        View Details
+                    </a>
+                    
+                    {% if item.is_available %}
+                        {% if user.is_authenticated %}
+                            <button onclick="addToCart('{{ item.slug }}')" class="btn btn-secondary">
+                                Add to Cart
+                            </button>
+                        {% else %}
+                            <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn btn-danger">
+                                Login to Buy
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <button disabled class="btn">Out of Stock</button>
+                    {% endif %}
+                </div>
                 
                 <!-- Quick Actions -->
                 <div class="quick-actions">
@@ -717,8 +774,122 @@
         {% endif %}
     </div>
 
-    <!-- JavaScript for Search Functionality -->
+    <!-- JavaScript for Search and Cart Functionality -->
     <script>
+    // Add to cart function for browse books page
+    function addToCart(productSlug) {
+        console.log('Adding to cart:', productSlug);
+        
+        // Get CSRF token
+        const csrfToken = getCSRFToken();
+        
+        // Show loading state on the button
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Adding...';
+        button.disabled = true;
+        
+        fetch(`/cart/add/${productSlug}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                return response.text().then(html => {
+                    throw new Error('Server returned HTML instead of JSON');
+                });
+            }
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            
+            if (data.success) {
+                // Update cart count in navbar
+                updateCartCount(data.total_items);
+                
+                // Show success message (stays on current page)
+                showCartMessage(data.message || 'Product added to cart!', 'success');
+            } else {
+                showCartMessage(data.message || 'Error adding to cart', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showCartMessage('An error occurred. Please try again.', 'error');
+        })
+        .finally(() => {
+            // Restore button state
+            button.textContent = originalText;
+            button.disabled = false;
+        });
+    }
+
+    // Update cart count in navbar
+    function updateCartCount(count) {
+        const cartCountElements = document.querySelectorAll('.cart-count');
+        cartCountElements.forEach(element => {
+            element.textContent = `(${count})`;
+            // Add animation
+            element.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                element.style.transform = 'scale(1)';
+            }, 300);
+        });
+    }
+
+    // CSRF token function
+    function getCSRFToken() {
+        // Try to get CSRF token from meta tag
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        if (csrfTokenMeta) {
+            return csrfTokenMeta.getAttribute('content');
+        }
+        
+        // Try to get from hidden input field
+        const csrfTokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfTokenInput) {
+            return csrfTokenInput.value;
+        }
+        
+        // Fallback: try to get from cookie
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+        
+        return cookieValue || '';
+    }
+
+    // Cart message function
+    function showCartMessage(message, type) {
+        // Remove any existing messages
+        const existingMessages = document.querySelectorAll('.cart-message');
+        existingMessages.forEach(msg => msg.remove());
+        
+        // Create message
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `cart-message cart-${type}`;
+        messageDiv.textContent = (type === 'success' ? '✅ ' : '❌ ') + message;
+        document.body.appendChild(messageDiv);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            messageDiv.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // Search functionality
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.querySelector('.search-button');
