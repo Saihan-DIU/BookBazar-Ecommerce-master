@@ -6,6 +6,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}BookBazar{% endblock %}</title>
+    
+    <!-- CSRF Token for AJAX requests -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
 
     <!-- Only include essential CSS for other pages -->
     <style>
@@ -76,12 +79,74 @@
         cursor: pointer;
         text-decoration: none;
         display: inline-block;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+      }
+
+      /* Loading states */
+      .loading {
+        opacity: 0.7;
+        pointer-events: none;
+        position: relative;
+      }
+
+      .loading::after {
+        content: '...';
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0%, 100% { content: '.'; }
+        33% { content: '..'; }
+        66% { content: '...'; }
+      }
+
+      /* Toast notifications */
+      .toast {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast.success {
+        background: #10b981;
+      }
+
+      .toast.error {
+        background: #ef4444;
+      }
+
+      .toast.info {
+        background: #3b82f6;
       }
 
       @media (max-width: 768px) {
         .main-content {
           padding: 1rem;
           margin-top: 100px;
+        }
+        
+        .toast {
+          top: 80px;
+          right: 10px;
+          left: 10px;
+          max-width: none;
         }
       }
 
@@ -91,6 +156,9 @@
     {% block extra_head %}{% endblock %}
   </head>
   <body>
+    <!-- Toast container -->
+    <div id="toastContainer"></div>
+
     <!-- Include the same navbar -->
     {% include 'eco/navbar.html' %}
 
@@ -100,8 +168,71 @@
       {% endblock %}
     </div>
 
-    <!-- Dark Mode Script -->
+    <!-- Global JavaScript -->
     <script>
+      // CSRF token for AJAX requests
+      function getCSRFToken() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        return csrfToken ? csrfToken.getAttribute('content') : '';
+      }
+
+      // Set up AJAX CSRF token for all fetch requests
+      const originalFetch = window.fetch;
+      window.fetch = function(...args) {
+        const [url, options = {}] = args;
+        
+        // Only add CSRF token for non-GET requests to same origin
+        if (!options.method || (options.method && !['GET', 'HEAD', 'OPTIONS'].includes(options.method.toUpperCase()))) {
+          options.headers = {
+            ...options.headers,
+            'X-CSRFToken': getCSRFToken()
+          };
+        }
+        
+        return originalFetch(url, options);
+      };
+
+      // Toast notification system
+      function showToast(message, type = 'info', duration = 3000) {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        
+        toastContainer.appendChild(toast);
+        
+        // Show toast
+        setTimeout(() => toast.classList.add('show'), 100);
+        
+        // Remove toast after duration
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => {
+            if (toast.parentNode) {
+              toast.parentNode.removeChild(toast);
+            }
+          }, 300);
+        }, duration);
+      }
+
+      // Global error handler for AJAX requests
+      window.handleAjaxError = function(error, defaultMessage = 'An error occurred. Please try again.') {
+        console.error('AJAX Error:', error);
+        showToast(defaultMessage, 'error');
+      };
+
+      // Loading state management
+      window.setLoading = function(element, isLoading) {
+        if (isLoading) {
+          element.classList.add('loading');
+          element.disabled = true;
+        } else {
+          element.classList.remove('loading');
+          element.disabled = false;
+        }
+      };
+
+      // Dark Mode Script
       document.addEventListener("DOMContentLoaded", function () {
         const darkModeToggle = document.getElementById("darkModeToggle");
         const currentTheme = localStorage.getItem("theme");
@@ -113,17 +244,114 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
 
-        darkModeToggle.addEventListener("click", function () {
-          const currentTheme = document.documentElement.getAttribute("data-theme");
-          if (currentTheme === "light") {
-            document.documentElement.setAttribute("data-theme", "dark");
-            localStorage.setItem("theme", "dark");
-          } else {
-            document.documentElement.setAttribute("data-theme", "light");
-            localStorage.setItem("theme", "light");
-          }
+        if (darkModeToggle) {
+          darkModeToggle.addEventListener("click", function () {
+            const currentTheme = document.documentElement.getAttribute("data-theme");
+            if (currentTheme === "light") {
+              document.documentElement.setAttribute("data-theme", "dark");
+              localStorage.setItem("theme", "dark");
+              showToast('Dark mode enabled', 'success', 2000);
+            } else {
+              document.documentElement.setAttribute("data-theme", "light");
+              localStorage.setItem("theme", "light");
+              showToast('Light mode enabled', 'success', 2000);
+            }
+          });
+        }
+
+        // Add click outside handler for dropdowns
+        document.addEventListener('click', function(e) {
+          // Close any open dropdowns when clicking outside
+          const dropdowns = document.querySelectorAll('.dropdown.show');
+          dropdowns.forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+              dropdown.classList.remove('show');
+            }
+          });
+        });
+
+        // Initialize tooltips if any
+        const tooltips = document.querySelectorAll('[data-tooltip]');
+        tooltips.forEach(tooltip => {
+          tooltip.addEventListener('mouseenter', function() {
+            // Add tooltip implementation if needed
+          });
         });
       });
+
+      // Utility function to format currency
+      window.formatCurrency = function(amount) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        }).format(amount);
+      };
+
+      // Utility function to debounce rapid clicks
+      window.debounce = function(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      };
+
+      // Cart utility functions
+      window.updateCartCount = function(count) {
+        const cartCountElements = document.querySelectorAll('.cart-count');
+        cartCountElements.forEach(element => {
+          element.textContent = count;
+          // Add animation
+          element.style.transform = 'scale(1.2)';
+          setTimeout(() => {
+            element.style.transform = 'scale(1)';
+          }, 300);
+        });
+      };
+
+      // Add to cart function (global)
+      window.addToCart = function(productSlug) {
+        const btn = event?.target || document.querySelector('[data-product-slug="' + productSlug + '"]');
+        
+        if (btn) {
+          setLoading(btn, true);
+        }
+
+        fetch(`/cart/add/${productSlug}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            updateCartCount(data.total_items);
+            showToast(data.message || 'Product added to cart!', 'success');
+          } else {
+            showToast(data.message || 'Error adding to cart', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          handleAjaxError(error, 'Failed to add item to cart');
+        })
+        .finally(() => {
+          if (btn) {
+            setLoading(btn, false);
+          }
+        });
+      };
     </script>
     
     {% block extra_js %}{% endblock %}

@@ -10,6 +10,8 @@ from django.shortcuts import reverse
 from django_countries.fields import CountryField
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.html import mark_safe
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 
 # ==================== BOOKSTORE-SPECIFIC CHOICES ====================
 
@@ -75,6 +77,69 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user)
 
+# ==================== CART MODELS ====================
+
+class Cart(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cart')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Cart ({self.user.username})"
+
+    @property
+    def total_items(self):
+        return sum(item.quantity for item in self.items.all())
+
+    @property
+    def subtotal(self):
+        return float(sum(item.total_price for item in self.items.all()))
+
+    @property
+    def total_discount(self):
+        return float(sum(item.total_discount for item in self.items.all()))
+
+    @property
+    def final_total(self):
+        return self.subtotal - self.total_discount
+
+    @property
+    def tax(self):
+        """Calculate tax (8% example)"""
+        return round(self.final_total * 0.08, 2)
+
+    @property
+    def grand_total(self):
+        return self.final_total + self.tax
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['cart', 'book']
+
+    def __str__(self):
+        return f"{self.quantity} x {self.book.title}"
+
+    @property
+    def total_price(self):
+        return float(self.book.price) * self.quantity
+
+    @property
+    def total_discount(self):
+        if self.book.discount_price:
+            return (float(self.book.price) - float(self.book.discount_price)) * self.quantity
+        return 0.0
+
+    @property
+    def final_price(self):
+        if self.book.discount_price:
+            return float(self.book.discount_price) * self.quantity
+        return float(self.book.price) * self.quantity
+
 class Category(MPTTModel):
     name = models.CharField(max_length=50, unique=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', db_index=True)
@@ -92,7 +157,7 @@ class Category(MPTTModel):
 
     @property
     def book_count(self):
-        return self.books.count()  # Fixed: changed 'categories' to 'books'
+        return self.books.count()
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -213,7 +278,7 @@ class Book(models.Model):
     @property
     def discount_percentage(self):
         if self.is_on_sale:
-            return int(((self.price - self.discount_price) / self.price) * 100)
+            return int(((float(self.price) - float(self.discount_price)) / float(self.price)) * 100)
         return 0
     
     @property
@@ -417,4 +482,9 @@ def userprofile_receiver(sender, instance, created, *args, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
+def create_user_cart(sender, instance, created, *args, **kwargs):
+    if created:
+        Cart.objects.create(user=instance)
+
 post_save.connect(userprofile_receiver, sender=settings.AUTH_USER_MODEL)
+post_save.connect(create_user_cart, sender=settings.AUTH_USER_MODEL)

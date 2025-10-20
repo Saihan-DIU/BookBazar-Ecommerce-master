@@ -10,13 +10,19 @@ urlpatterns = [
     path('', views.home, name='home'),
     
     # ==================== PRODUCTS ====================
-     path('products/', views.browse_books, name='product-list'),
+    path('products/', views.browse_books, name='product-list'),
     path('product/<slug:slug>/', views.EcoDetail.as_view(), name='product-detail'),
 
-    # ==================== CART & ORDER MANAGEMENT ====================
+    # ==================== NEW CART SYSTEM ====================
+    path('cart/', views.cart_view, name='cart'),
+    path('cart/add/<slug:slug>/', views.add_to_cart, name='add-to-cart'),
+    path('cart/update/<int:item_id>/', views.update_cart_item, name='update-cart-item'),
+    path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove-from-cart'),
+    
+    # ==================== LEGACY CART & ORDER MANAGEMENT (for backward compatibility) ====================
     path('order-summary/', views.order_summary, name='order-summary'),
-    path('add-to-cart/<slug:slug>/', views.add_to_cart, name='add-to-cart'),
-    path('remove-from-cart/<slug:slug>/', views.remove_from_cart, name='remove-from-cart'),
+    path('add-to-cart/<slug:slug>/', views.add_to_cart, name='add-to-cart-legacy'),
+    path('remove-from-cart/<slug:slug>/', views.remove_from_cart_legacy, name='remove-from-cart-legacy'),
     path('remove-single-item-from-cart/<slug:slug>/', views.remove_single_item_from_cart, name='remove-single-item-from-cart'),
     
     # ==================== CHECKOUT & PAYMENT ====================

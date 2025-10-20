@@ -51,6 +51,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'abcd.urls'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -59,11 +60,11 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                'django.template.context_processors.request',  # Make sure this is included
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',  # For media files
-                'eco.context_processors.cart_count',  # Add this line - Cart context processor
+                'eco.context_processors.cart_count',  # Cart context processor - already added!
             ],
         },
     },
@@ -138,3 +139,32 @@ SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 
 # Security settings for development
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
+
+# ==================== NEW SETTINGS FOR CART SYSTEM ====================
+
+# Login URL for @login_required decorator
+LOGIN_URL = '/users/login/'
+
+# Messages framework settings
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# File upload settings
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# Cart specific settings
+CART_SESSION_ID = 'cart'  # For guest cart functionality (future enhancement)
+
+# Security settings (for development - update for production)
+if DEBUG:
+    # During development, you might want less strict security
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+else:
+    # Production security settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True

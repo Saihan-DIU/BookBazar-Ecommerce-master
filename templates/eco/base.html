@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookBazar - Modern Book Store</title>
+     {% csrf_token %}
     <style>
         :root {
             --primary: #2563eb;
@@ -207,7 +208,7 @@
 
         /* Enhanced Categories Section */
         .categories-section {
-            padding: 4rem 0 2rem 0; /* Reduced bottom padding */
+            padding: 4rem 0 2rem 0;
         }
 
         .section-title {
@@ -330,20 +331,20 @@
             display: inline-block;
         }
 
-        /* Category Actions - SHORTER GAP */
+        /* Category Actions */
         .category-actions {
             display: flex;
             justify-content: center;
-            margin-top: 2rem; /* Reduced from 3rem to 2rem */
+            margin-top: 2rem;
             width: 100%;
         }
 
-        /* Featured Books Section - SHORTER GAP */
+        /* Featured Books Section */
         .featured-section {
-            padding: 2rem 0 4rem 0; /* Reduced top padding from 4rem to 2rem */
+            padding: 2rem 0 4rem 0;
             background: var(--gray-light);
             border-radius: 20px;
-            margin: 1rem 0; /* Reduced margin from 3rem to 1rem */
+            margin: 1rem 0;
         }
 
         .books-grid {
@@ -389,7 +390,7 @@
             font-size: 0.9rem;
         }
 
-        /* UPDATED: Book Pricing Styles - Matching your category section */
+        /* Book Pricing Styles */
         .book-pricing {
             margin: 0.5rem 0;
         }
@@ -427,6 +428,44 @@
             color: #dc2626;
             font-size: 1.2rem;
             font-weight: bold;
+        }
+
+        /* Book Actions Styles */
+        .book-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .book-actions .btn {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+
+        .book-actions .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .book-actions .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .book-actions .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .book-actions .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
         }
 
         /* Newsletter Section */
@@ -593,30 +632,38 @@
             .newsletter-form {
                 flex-direction: column;
             }
+
+            .book-actions {
+                flex-direction: column;
+            }
+
+            .book-actions .btn {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
- <nav class="navbar">
-    <div class="nav-container">
-        <div class="logo">BookBazar</div>
-        <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/products/">Browse Books</a></li>
-            <li><a href="/order-summary/">Cart</a></li>
-            <li><a href="/account/">Account</a></li>
-            <li><a href="/contact/">Contact</a></li>
-            <!-- Dark Mode Toggle -->
-            <li>
-                <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
-                    <span class="dark-mode-icon">🌙</span>
-                    <span class="light-mode-icon">☀️</span>
-                </button>
-            </li>
-        </ul>
-    </div>
-</nav>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">BookBazar</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products/">Browse Books</a></li>
+                <li><a href="/order-summary/">Cart</a></li>
+                <li><a href="/account/">Account</a></li>
+                <li><a href="/contact/">Contact</a></li>
+                <!-- Dark Mode Toggle -->
+                <li>
+                    <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
+                        <span class="dark-mode-icon">🌙</span>
+                        <span class="light-mode-icon">☀️</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -630,7 +677,7 @@
             </div>
         </section>
 
-        <!-- Book Categories Section - NOW DYNAMIC -->
+        <!-- Book Categories Section -->
         <section class="categories-section">
             <h2 class="section-title">Book Categories</h2>
             <div class="categories-grid">
@@ -643,23 +690,23 @@
                         {% else %}
                             <!-- Default images based on category name -->
                             {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
-                            <img src="https://i.pinimg.com/originals/b0/52/6d/b0526d8ca7d5b6202bc0b22481258421.jpg" alt="{{ category.name }}">
+                                <img src="https://i.pinimg.com/originals/b0/52/6d/b0526d8ca7d5b6202bc0b22481258421.jpg" alt="{{ category.name }}">
                             {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
-                            <img src="https://cdn.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_640.jpg" alt="{{ category.name }}">
+                                <img src="https://cdn.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_640.jpg" alt="{{ category.name }}">
                             {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
-                            <img src="https://cdn.pixabay.com/photo/2018/08/15/13/10/galaxy-3608029_640.jpg" alt="{{ category.name }}">
+                                <img src="https://cdn.pixabay.com/photo/2018/08/15/13/10/galaxy-3608029_640.jpg" alt="{{ category.name }}">
                             {% elif "business" in category.name|lower or "finance" in category.name|lower %}
-                            <img src="https://images.unsplash.com/photo-1664575599618-8f6bd76fc670?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                                <img src="https://images.unsplash.com/photo-1664575599618-8f6bd76fc670?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
                             {% elif "thriller" in category.name|lower %}
-                            <img src="https://images-na.ssl-images-amazon.com/images/I/71pgI2ou5oL.jpg" alt="{{ category.name }}">
+                                <img src="https://images-na.ssl-images-amazon.com/images/I/71pgI2ou5oL.jpg" alt="{{ category.name }}">
                             {% elif "art" in category.name|lower or "design" in category.name|lower %}
-                            <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                                <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
                             {% elif "education" in category.name|lower %}
-                            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
                             {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
-                            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
                             {% else %}
-                            <img src="https://via.placeholder.com/400x300/cccccc/666666?text=Book+Category" alt="{{ category.name }}">
+                                <img src="https://via.placeholder.com/400x300/cccccc/666666?text=Book+Category" alt="{{ category.name }}">
                             {% endif %}
                         {% endif %}
                         <span class="category-icon">
@@ -678,23 +725,23 @@
                         <h3 class="category-title">{{ category.name }}</h3>
                         <p class="category-description">
                             {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
-                            Explore captivating stories, novels, and literary masterpieces from around the world.
+                                Explore captivating stories, novels, and literary masterpieces from around the world.
                             {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
-                            Latest discoveries, programming guides, AI, and cutting-edge technology books.
+                                Latest discoveries, programming guides, AI, and cutting-edge technology books.
                             {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
-                            Futuristic worlds, space adventures, and mind-bending speculative fiction.
+                                Futuristic worlds, space adventures, and mind-bending speculative fiction.
                             {% elif "business" in category.name|lower or "finance" in category.name|lower %}
-                            Entrepreneurship, investing, management, and financial success strategies.
+                                Entrepreneurship, investing, management, and financial success strategies.
                             {% elif "thriller" in category.name|lower %}
-                            Suspenseful stories, mysteries, and heart-pounding thrillers that keep you on edge.
+                                Suspenseful stories, mysteries, and heart-pounding thrillers that keep you on edge.
                             {% elif "art" in category.name|lower or "design" in category.name|lower %}
-                            Creative arts, graphic design, photography, and visual storytelling.
+                                Creative arts, graphic design, photography, and visual storytelling.
                             {% elif "education" in category.name|lower %}
-                            Academic resources, teaching methods, and educational development.
+                                Academic resources, teaching methods, and educational development.
                             {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
-                            Culinary arts, healthy living, home, and lifestyle improvement books.
+                                Culinary arts, healthy living, home, and lifestyle improvement books.
                             {% else %}
-                            Discover amazing books in {{ category.name }} category.
+                                Discover amazing books in {{ category.name }} category.
                             {% endif %}
                         </p>
                         <!-- Dynamic book count - REAL VALUE FROM DATABASE -->
@@ -709,13 +756,13 @@
                 {% endfor %}
             </div>
 
-            <!-- View All Categories Button - NOW WITH SHORTER GAP -->
+            <!-- View All Categories Button -->
             <div class="category-actions">
                 <a href="/categories/" class="btn btn-outline">View All Categories</a>
             </div>
         </section>
 
-        <!-- Featured Books Section - NOW CLOSER TO CATEGORIES -->
+        <!-- Featured Books Section -->
         <section class="featured-section">
             <h2 class="section-title">Featured Books</h2>
             <div class="books-grid">
@@ -736,7 +783,7 @@
                             {% endif %}
                         </p>
                         
-                        <!-- UPDATED: Price Section - Matching your category section styling -->
+                        <!-- Price Section -->
                         <div class="book-pricing">
                             {% if book.is_on_sale %}
                                 <div class="price-container">
@@ -751,7 +798,15 @@
                             {% endif %}
                         </div>
                         
-                        <a href="{{ book.get_absolute_url }}" class="btn">View Details</a>
+                        <!-- Book Actions with both buttons -->
+                        <div class="book-actions">
+                            <a href="{{ book.get_absolute_url }}" class="btn btn-outline">
+                                View Details
+                            </a>
+                            <button onclick="addToCart('{{ book.slug }}')" class="btn btn-primary">
+                                Add to Cart
+                            </button>
+                        </div>
                     </div>
                 </div>
                 {% empty %}
@@ -840,6 +895,158 @@
                 });
             });
         });
+
+      // Add to cart function for home page
+function addToCart(productSlug) {
+    console.log('Adding to cart:', productSlug);
+    
+    // Get CSRF token
+    const csrfToken = getCSRFToken();
+    console.log('CSRF Token:', csrfToken ? 'Found' : 'Not found');
+    
+    fetch(`/cart/add/${productSlug}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({}) // Empty body since we're not sending data
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            // Update cart count in navbar
+            const cartCountElements = document.querySelectorAll('.cart-count');
+            cartCountElements.forEach(element => {
+                element.textContent = data.total_items;
+                // Add animation
+                element.style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 300);
+            });
+            
+            // Show success message
+            showSuccessMessage(data.message || 'Product added to cart!');
+        } else {
+            showErrorMessage(data.message || 'Error adding to cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorMessage('An error occurred. Please try again.');
+    });
+}
+
+// Improved CSRF token function
+function getCSRFToken() {
+    // Try to get CSRF token from meta tag
+    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+    if (csrfTokenMeta) {
+        return csrfTokenMeta.getAttribute('content');
+    }
+    
+    // Try to get from hidden input field
+    const csrfTokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (csrfTokenInput) {
+        return csrfTokenInput.value;
+    }
+    
+    // Fallback: try to get from cookie
+    const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+    
+    return cookieValue || '';
+}
+
+// Success message function
+function showSuccessMessage(message) {
+    // Create a temporary success message
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+    `;
+    successDiv.textContent = message;
+    document.body.appendChild(successDiv);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        successDiv.remove();
+    }, 3000);
+}
+
+// Error message function
+function showErrorMessage(message) {
+    // Create a temporary error message
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: #ef4444;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+    `;
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 3000);
+}
+
+// Add slideIn animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+        // CSRF token function
+        function getCSRFToken() {
+            // Try to get CSRF token from meta tag
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            if (csrfTokenMeta) {
+                return csrfTokenMeta.getAttribute('content');
+            }
+            
+            // Fallback: try to get from form input
+            const csrfTokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            return csrfTokenInput ? csrfTokenInput.value : '';
+        }
     </script>
 </body>
 </html>
