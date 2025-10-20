@@ -37,13 +37,16 @@ def create_ref_code():
 
 def home(request):
     """Home page view - renders base.html as home page"""
-    # Get featured books for the home page - UPDATED with featured filter
+    # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+    categories = Category.objects.annotate(
+        total_books=Count('books', filter=Q(books__is_available=True))
+    )
+    
+    # Get featured books for the home page
     featured_books = Book.objects.filter(
         featured=True, 
         is_available=True
-    ).select_related('author', 'category')[:6]  # Added select_related for performance
-    
-    categories = Category.objects.all()
+    ).select_related('author', 'category')[:6]
     
     # Get cart count for the navbar
     cart_count = 0
@@ -54,7 +57,7 @@ def home(request):
     
     context = {
         'featured_books': featured_books,
-        'categories': categories,
+        'categories': categories,  # Now includes total_books
         'cart_count': cart_count,
     }
     return render(request, 'eco/base.html', context)
@@ -66,13 +69,15 @@ def browse_books(request):
     # Get all available books, ordered by newest first
     queryset = Book.objects.filter(is_available=True).select_related('author', 'category').order_by('-created_at')
     
+    # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+    categories = Category.objects.annotate(
+        total_books=Count('books', filter=Q(books__is_available=True))
+    )
+    
     # Pagination - 12 books per page
     paginator = Paginator(queryset, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
-    # Get categories for sidebar/filter (if needed)
-    categories = Category.objects.all()
     
     # Get cart count for the navbar
     cart_count = 0
@@ -85,7 +90,7 @@ def browse_books(request):
         'queryset': page_obj,
         'page_obj': page_obj,
         'is_paginated': page_obj.has_other_pages(),
-        'categories': categories,
+        'categories': categories,  # Now includes total_books
         'cart_count': cart_count,
     }
     return render(request, 'eco/browse_books.html', context)
@@ -152,7 +157,10 @@ class SearchView(View):
     def get(self, request, *args, **kwargs):
         try:
             queryset1 = Book.objects.all()
-            category = Category.objects.all()
+            # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+            categories = Category.objects.annotate(
+                total_books=Count('books', filter=Q(books__is_available=True))
+            )
             query = request.GET.get('q')
             if query:
                 queryset1 = queryset1.filter(
@@ -172,7 +180,7 @@ class SearchView(View):
                 
             context = {
                 'queryset': queryset,
-                'category': category,
+                'categories': categories,  # Now includes total_books
                 'query': query,
             }
             return render(request, 'eco/results.html', context)
@@ -191,7 +199,10 @@ class EcoIndex(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         return context
 
 class EcoDetail(DetailView):
@@ -201,7 +212,10 @@ class EcoDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         context['related_items'] = Book.objects.filter(category=self.object.category).exclude(pk=self.object.pk)[:3]
         
         # Check if book is in user's wishlist
@@ -217,13 +231,16 @@ class EcoDetail(DetailView):
 
 class CategoryDetail(DetailView, MultipleObjectMixin):
     model = Category
-    template_name = 'eco/categoryy.html'
+    template_name = 'eco/category.html'
     paginate_by = 6
 
     def get_context_data(self, **kwargs):
         object_list = Book.objects.filter(category=self.object)
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         return context
 
 # ==================== CHECKOUT & PAYMENT ====================
@@ -672,7 +689,10 @@ class ContactView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         return context
 
     def form_valid(self, form):
@@ -709,7 +729,10 @@ class Accounts(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['address'] = Address.objects.filter(user=self.request.user)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         return context
 
     def form_valid(self, form):
@@ -738,7 +761,10 @@ class AddProductView(StaffRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         context['title'] = 'Add New Book'
         return context
 
@@ -754,7 +780,10 @@ class EditProductView(StaffRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         context['title'] = 'Edit Book'
         context['editing'] = True
         return context
@@ -779,7 +808,10 @@ class AddCategoryView(StaffRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         context['title'] = 'Add New Category'
         return context
 
@@ -791,7 +823,10 @@ class ProductSearchView(View):
     def get(self, request, *args, **kwargs):
         form = ProductSearchForm(request.GET)
         products = Book.objects.all()
-        category = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        categories = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
 
         if form.is_valid():
             query = form.cleaned_data.get('query')
@@ -820,7 +855,7 @@ class ProductSearchView(View):
         context = {
             'form': form,
             'products': products,
-            'category': category,
+            'categories': categories,  # Now includes total_books
             'query': request.GET.get('query', ''),
         }
         return render(request, 'eco/product_search.html', context)
@@ -843,7 +878,10 @@ class ProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        # Get categories with book counts - FIXED: Changed annotation name to avoid conflict
+        context['categories'] = Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
         context['current_category'] = None
         
         category_slug = self.kwargs.get('category_slug')

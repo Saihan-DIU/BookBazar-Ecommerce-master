@@ -630,48 +630,83 @@
             </div>
         </section>
 
-        <!-- Book Categories Section -->
+        <!-- Book Categories Section - NOW DYNAMIC -->
         <section class="categories-section">
             <h2 class="section-title">Book Categories</h2>
             <div class="categories-grid">
-                <!-- Fiction & Literature -->
-                <div class="category-card" onclick="location.href='/categories/fiction/'">
+                <!-- Dynamic Categories - Show first 3 categories -->
+                {% for category in categories|slice:":3" %}
+                <div class="category-card" onclick="location.href='{% url 'eco:category-detail' category.slug %}'">
                     <div class="category-image">
-                        <img src="https://i.pinimg.com/originals/b0/52/6d/b0526d8ca7d5b6202bc0b22481258421.jpg" alt="Fiction & Literature">
-                        <span class="category-icon">📖</span>
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                        {% else %}
+                            <!-- Default images based on category name -->
+                            {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
+                            <img src="https://i.pinimg.com/originals/b0/52/6d/b0526d8ca7d5b6202bc0b22481258421.jpg" alt="{{ category.name }}">
+                            {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
+                            <img src="https://cdn.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_640.jpg" alt="{{ category.name }}">
+                            {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
+                            <img src="https://cdn.pixabay.com/photo/2018/08/15/13/10/galaxy-3608029_640.jpg" alt="{{ category.name }}">
+                            {% elif "business" in category.name|lower or "finance" in category.name|lower %}
+                            <img src="https://images.unsplash.com/photo-1664575599618-8f6bd76fc670?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                            {% elif "thriller" in category.name|lower %}
+                            <img src="https://images-na.ssl-images-amazon.com/images/I/71pgI2ou5oL.jpg" alt="{{ category.name }}">
+                            {% elif "art" in category.name|lower or "design" in category.name|lower %}
+                            <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                            {% elif "education" in category.name|lower %}
+                            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                            {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
+                            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
+                            {% else %}
+                            <img src="https://via.placeholder.com/400x300/cccccc/666666?text=Book+Category" alt="{{ category.name }}">
+                            {% endif %}
+                        {% endif %}
+                        <span class="category-icon">
+                            {% if "fiction" in category.name|lower or "literature" in category.name|lower %}📖
+                            {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}🔬
+                            {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}🚀
+                            {% elif "business" in category.name|lower or "finance" in category.name|lower %}🎯
+                            {% elif "thriller" in category.name|lower %}🧠
+                            {% elif "art" in category.name|lower or "design" in category.name|lower %}🎨
+                            {% elif "education" in category.name|lower %}📊
+                            {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}🍳
+                            {% else %}📚{% endif %}
+                        </span>
                     </div>
                     <div class="category-content">
-                        <h3 class="category-title">Fiction & Literature</h3>
-                        <p class="category-description">Explore captivating stories, novels, and literary masterpieces from around the world.</p>
-                        <span class="category-count">250+ Books</span>
+                        <h3 class="category-title">{{ category.name }}</h3>
+                        <p class="category-description">
+                            {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
+                            Explore captivating stories, novels, and literary masterpieces from around the world.
+                            {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
+                            Latest discoveries, programming guides, AI, and cutting-edge technology books.
+                            {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
+                            Futuristic worlds, space adventures, and mind-bending speculative fiction.
+                            {% elif "business" in category.name|lower or "finance" in category.name|lower %}
+                            Entrepreneurship, investing, management, and financial success strategies.
+                            {% elif "thriller" in category.name|lower %}
+                            Suspenseful stories, mysteries, and heart-pounding thrillers that keep you on edge.
+                            {% elif "art" in category.name|lower or "design" in category.name|lower %}
+                            Creative arts, graphic design, photography, and visual storytelling.
+                            {% elif "education" in category.name|lower %}
+                            Academic resources, teaching methods, and educational development.
+                            {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
+                            Culinary arts, healthy living, home, and lifestyle improvement books.
+                            {% else %}
+                            Discover amazing books in {{ category.name }} category.
+                            {% endif %}
+                        </p>
+                        <!-- Dynamic book count - REAL VALUE FROM DATABASE -->
+                        <span class="category-count">{{ category.total_books }}+ Books</span>
                     </div>
                 </div>
-
-                <!-- Science & Technology -->
-                <div class="category-card" onclick="location.href='/categories/science/'">
-                    <div class="category-image">
-                        <img src="https://cdn.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_640.jpg" alt="Science & Technology">
-                        <span class="category-icon">🔬</span>
-                    </div>
-                    <div class="category-content">
-                        <h3 class="category-title">Science & Technology</h3>
-                        <p class="category-description">Latest discoveries, programming guides, AI, and cutting-edge technology books.</p>
-                        <span class="category-count">180+ Books</span>
-                    </div>
+                {% empty %}
+                <div class="no-categories" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                    <h3>No categories available</h3>
+                    <p>Check back later for new categories!</p>
                 </div>
-
-                <!-- Science Fiction -->
-                <div class="category-card" onclick="location.href='/categories/sci-fi/'">
-                    <div class="category-image">
-                        <img src="https://cdn.pixabay.com/photo/2018/08/15/13/10/galaxy-3608029_640.jpg" alt="Science Fiction">
-                        <span class="category-icon">🚀</span>
-                    </div>
-                    <div class="category-content">
-                        <h3 class="category-title">Science Fiction</h3>
-                        <p class="category-description">Futuristic worlds, space adventures, and mind-bending speculative fiction.</p>
-                        <span class="category-count">120+ Books</span>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
 
             <!-- View All Categories Button - NOW WITH SHORTER GAP -->
