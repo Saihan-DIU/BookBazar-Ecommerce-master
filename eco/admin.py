@@ -154,7 +154,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ['name']
     
     def book_count(self, obj):
-        return obj.book_set.count()
+        return obj.books.count()
     book_count.short_description = 'Number of Books'
 
 class OrderItemAdmin(admin.ModelAdmin):

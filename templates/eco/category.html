@@ -35,51 +35,51 @@
                     <img src="{% static 'images/default-category.jpg' %}" alt="{{ category.name }}">
                     {% endif %}
                 {% endif %}
+                <span class="category-icon">
+                    {% if "fiction" in category.name|lower or "literature" in category.name|lower %}📖
+                    {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}🔬
+                    {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}🚀
+                    {% elif "business" in category.name|lower or "finance" in category.name|lower %}🎯
+                    {% elif "thriller" in category.name|lower %}🧠
+                    {% elif "art" in category.name|lower or "design" in category.name|lower %}🎨
+                    {% elif "education" in category.name|lower %}📊
+                    {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}🍳
+                    {% else %}📚{% endif %}
+                </span>
             </div>
             
-            <!-- Dynamic icon based on category -->
-            <span class="category-icon">
-                {% if "fiction" in category.name|lower or "literature" in category.name|lower %}📖
-                {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}🔬
-                {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}🚀
-                {% elif "business" in category.name|lower or "finance" in category.name|lower %}🎯
-                {% elif "thriller" in category.name|lower %}🧠
-                {% elif "art" in category.name|lower or "design" in category.name|lower %}🎨
-                {% elif "education" in category.name|lower %}📊
-                {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}🍳
-                {% else %}📚{% endif %}
-            </span>
-            
-            <h3 class="category-title">{{ category.name }}</h3>
-            
-            <!-- Dynamic description based on category -->
-            <p class="category-description">
-                {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
-                Explore captivating stories, novels, and literary masterpieces from around the world.
-                {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
-                Latest discoveries, programming guides, AI, and cutting-edge technology books.
-                {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
-                Futuristic worlds, space adventures, and mind-bending speculative fiction.
-                {% elif "business" in category.name|lower or "finance" in category.name|lower %}
-                Entrepreneurship, investing, management, and financial success strategies.
-                {% elif "thriller" in category.name|lower %}
-                Suspenseful stories, mysteries, and heart-pounding thrillers that keep you on edge.
-                {% elif "art" in category.name|lower or "design" in category.name|lower %}
-                Creative arts, graphic design, photography, and visual storytelling.
-                {% elif "education" in category.name|lower %}
-                Academic resources, teaching methods, and educational development.
-                {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
-                Culinary arts, healthy living, home, and lifestyle improvement books.
-                {% else %}
-                Discover amazing books in {{ category.name }} category.
-                {% endif %}
-            </p>
-            
-            <!-- Dynamic book count - REAL VALUE FROM DATABASE -->
-           <span class="category-count">{{ category.total_books }}+ Books</span>
+            <div class="category-content">
+                <h3 class="category-title">{{ category.name }}</h3>
+                
+                <!-- Dynamic description based on category -->
+                <p class="category-description">
+                    {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
+                    Explore captivating stories, novels, and literary masterpieces from around the world.
+                    {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
+                    Latest discoveries, programming guides, AI, and cutting-edge technology books.
+                    {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
+                    Futuristic worlds, space adventures, and mind-bending speculative fiction.
+                    {% elif "business" in category.name|lower or "finance" in category.name|lower %}
+                    Entrepreneurship, investing, management, and financial success strategies.
+                    {% elif "thriller" in category.name|lower %}
+                    Suspenseful stories, mysteries, and heart-pounding thrillers that keep you on edge.
+                    {% elif "art" in category.name|lower or "design" in category.name|lower %}
+                    Creative arts, graphic design, photography, and visual storytelling.
+                    {% elif "education" in category.name|lower %}
+                    Academic resources, teaching methods, and educational development.
+                    {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
+                    Culinary arts, healthy living, home, and lifestyle improvement books.
+                    {% else %}
+                    Discover amazing books in {{ category.name }} category.
+                    {% endif %}
+                </p>
+                
+                <!-- Dynamic book count - REAL VALUE FROM DATABASE -->
+                <span class="category-count">{{ category.book_count }}+ Books</span>
+            </div>
         </div>
         {% empty %}
-        <div class="no-categories" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+        <div class="no-categories">
             <h3>No categories available</h3>
             <p>Check back later for new categories!</p>
         </div>
@@ -89,54 +89,62 @@
 
 <style>
 .categories-section {
-    padding: 4rem 2rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 4rem 0 2rem 0;
+    background: var(--bg-color);
+    transition: all 0.3s ease;
 }
 
 .section-title {
     text-align: center;
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 3rem;
     margin-bottom: 3rem;
-    color: #1e293b;
+    background: linear-gradient(45deg, var(--text-color), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
     position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .section-title::after {
     content: '';
     position: absolute;
     bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(45deg, #4f46e5, #7c3aed);
-    border-radius: 2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    border-radius: 3px;
 }
 
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    padding: 2rem 0;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .category-card {
-    background: white;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 0;
+    text-align: center;
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow);
 }
 
 .category-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
 }
 
 .category-card::before {
@@ -146,15 +154,17 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    border-radius: 2px;
 }
 
 .category-image {
     width: 100%;
     height: 200px;
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
     overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+    position: relative;
 }
 
 .category-image img {
@@ -165,43 +175,75 @@
 }
 
 .category-card:hover .category-image img {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .category-icon {
-    font-size: 2rem;
-    display: block;
-    margin-bottom: 0.5rem;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .category-icon {
+    background: rgba(30, 41, 59, 0.9);
+}
+
+.category-content {
+    padding: 1.5rem;
 }
 
 .category-title {
     font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-color);
 }
 
 .category-description {
-    color: #64748b;
-    margin-bottom: 1rem;
-    line-height: 1.5;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
 }
 
 .category-count {
-    display: inline-block;
-    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    background: var(--primary);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    font-weight: 600;
     font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
 }
 
 .no-categories {
-    background: white;
+    background: var(--card-bg);
     border-radius: 12px;
     padding: 3rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.no-categories h3 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.no-categories p {
+    color: var(--gray);
 }
 
 /* Responsive Design */
@@ -211,7 +253,7 @@
     }
     
     .section-title {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
     
     .categories-grid {
@@ -219,7 +261,7 @@
         gap: 1.5rem;
     }
     
-    .category-card {
+    .category-content {
         padding: 1rem;
     }
 }
