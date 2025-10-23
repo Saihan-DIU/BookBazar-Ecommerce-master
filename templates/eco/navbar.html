@@ -6,25 +6,35 @@
         BookBazar
       </a>
     </div>
-    <ul class="nav-links">
-      <li><a href="{% url 'eco:home' %}">Home</a></li>
-      <li><a href="{% url 'eco:product-list' %}">Browse Book</a></li>
-      <li>
-        <a href="{% url 'eco:order-summary' %}">
-          Cart
-          <span class="cart-badge"> {{ cart_count }} </span>
-        </a>
-      </li>
-      
-      {% if user.is_authenticated %}
-        <li><a href="{% url 'eco:customer-account' %}">My Account</a></li>
-        <li><a href="{% url 'logout' %}">Logout ({{ user.username }})</a></li>
-      {% else %}
-        <li><a href="{% url 'login' %}">Login</a></li>
-        <li><a href="{% url 'users:register' %}">Register</a></li>
-      {% endif %}
-      
-      <li><a href="{% url 'eco:contact' %}">Contact</a></li>
+  <nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">BookBazar</div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/products/">Browse Books</a></li>
+            <li><a href="/order-summary/">Cart</a></li>
+            
+            <!-- Smart Account link - shows profile if logged in, login if not -->
+            <li>
+                {% if user.is_authenticated %}
+                    <a href="/users/profile/">Account ({{ user.email }})</a>
+                {% else %}
+                    <a href="/users/login/">Account</a>
+                {% endif %}
+            </li>
+            
+            <li><a href="/contact/">Contact</a></li>
+            
+            <!-- Dark Mode Toggle -->
+            <li>
+                <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
+                    <span class="dark-mode-icon">🌙</span>
+                    <span class="light-mode-icon">☀️</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+</nav>
 
       <!-- Dark Mode Toggle -->
       <li>

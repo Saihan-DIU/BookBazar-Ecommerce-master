@@ -645,26 +645,36 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">BookBazar</div>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/products/">Browse Books</a></li>
-                <li><a href="/order-summary/">Cart</a></li>
-                <li><a href="/account/">Account</a></li>
-                <li><a href="/contact/">Contact</a></li>
-                <!-- Dark Mode Toggle -->
-                <li>
-                    <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
-                        <span class="dark-mode-icon">🌙</span>
-                        <span class="light-mode-icon">☀️</span>
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
+ <!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">BookBazar</div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/products/">Browse Books</a></li>
+            <li><a href="/order-summary/">Cart</a></li>
+            
+            <!-- Smart Account link - shows profile if logged in, login if not -->
+            <li>
+                {% if user.is_authenticated %}
+                    <a href="/users/profile/">Account ({{ user.email }})</a>
+                {% else %}
+                    <a href="/users/login/">Account</a>
+                {% endif %}
+            </li>
+            
+            <li><a href="/contact/">Contact</a></li>
+            
+            <!-- Dark Mode Toggle -->
+            <li>
+                <button id="darkModeToggle" class="dark-mode-btn" title="Toggle dark mode">
+                    <span class="dark-mode-icon">🌙</span>
+                    <span class="light-mode-icon">☀️</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+</nav>
     <!-- Main Content -->
     <div class="main-content">
         {% block content %}

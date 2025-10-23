@@ -1,0 +1,38 @@
+{% extends "eco/base.html" %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+    <h1 style="text-align: center; margin-bottom: 2rem; color: var(--text-color);">Edit Profile</h1>
+    
+    <div style="background: var(--card-bg); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border);">
+        <p style="color: var(--gray); margin-bottom: 2rem; text-align: center;">
+            Update your account information
+        </p>
+        
+        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-color); font-weight: 500;">
+                    Email Address
+                </label>
+                <input type="email" value="{{ user.email }}" disabled 
+                       style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--gray-light); color: var(--gray);">
+                <small style="color: var(--gray);">Contact admin to change email</small>
+            </div>
+            
+            <!-- Add more fields here when you have a profile model -->
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary" disabled>Save Changes</button>
+                <a href="{% url 'users:profile' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+        
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center;">
+            <p style="color: var(--gray); margin-bottom: 1rem;">Need to make other changes?</p>
+            <a href="{% url 'users:change_password' %}" class="btn btn-outline">Change Password</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

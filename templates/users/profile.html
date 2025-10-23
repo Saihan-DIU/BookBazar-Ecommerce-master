@@ -1,0 +1,48 @@
+{% extends "eco/base.html" %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+    <h1 style="text-align: center; margin-bottom: 2rem; color: var(--text-color);">My Profile</h1>
+    
+    <div style="background: var(--card-bg); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border);">
+        <!-- User Info Card -->
+        <div style="display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: center; margin-bottom: 2rem;">
+            <div style="width: 100px; height: 100px; background: linear-gradient(45deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; font-weight: bold;">
+                {{ user.email|first|upper }}
+            </div>
+            <div>
+                <h2 style="margin-bottom: 0.5rem; color: var(--text-color);">{{ user.email }}</h2>
+                <p style="color: var(--gray); margin-bottom: 1rem;">Member since {{ user.date_joined|date:"F j, Y" }}</p>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="{% url 'users:profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+                    <a href="{% url 'users:change_password' %}" class="btn btn-outline">Change Password</a>
+                    <a href="{% url 'users:logout' %}" class="btn btn-outline">Logout</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Details -->
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-color);">Account Details</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div style="background: var(--gray-light); padding: 1rem; border-radius: 8px;">
+                    <strong style="color: var(--primary);">Email Address:</strong><br>
+                    <span style="color: var(--text-color);">{{ user.email }}</span>
+                </div>
+                <div style="background: var(--gray-light); padding: 1rem; border-radius: 8px;">
+                    <strong style="color: var(--primary);">Last Login:</strong><br>
+                    <span style="color: var(--text-color);">{{ user.last_login|date:"M d, Y H:i" }}</span>
+                </div>
+                <div style="background: var(--gray-light); padding: 1rem; border-radius: 8px;">
+                    <strong style="color: var(--primary);">Account Status:</strong><br>
+                    <span style="color: var(--secondary); font-weight: bold;">Active</span>
+                </div>
+                <div style="background: var(--gray-light); padding: 1rem; border-radius: 8px;">
+                    <strong style="color: var(--primary);">Member For:</strong><br>
+                    <span style="color: var(--text-color);">{{ user.date_joined|timesince }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
