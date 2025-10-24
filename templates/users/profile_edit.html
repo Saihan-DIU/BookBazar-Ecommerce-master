@@ -1,38 +1,956 @@
 {% extends "eco/base.html" %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto; padding: 2rem;">
-    <h1 style="text-align: center; margin-bottom: 2rem; color: var(--text-color);">Edit Profile</h1>
-    
-    <div style="background: var(--card-bg); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border);">
-        <p style="color: var(--gray); margin-bottom: 2rem; text-align: center;">
-            Update your account information
-        </p>
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .avatar-large {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+        border: 4px solid var(--light);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .avatar-large.has-photo .avatar-text {
+        display: none;
+    }
+
+    .avatar-large:hover {
+        transform: scale(1.05);
+    }
+
+    .avatar-edit-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .avatar-large:hover .avatar-edit-overlay {
+        opacity: 1;
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .user-title {
+        font-size: 1.1rem;
+        color: var(--gray);
+        font-weight: 500;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+    }
+
+    .sidebar {
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        padding: 0;
+        overflow: hidden;
+        height: fit-content;
+    }
+
+    .sidebar-section {
+        padding: 2rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-section:last-child {
+        border-bottom: none;
+    }
+
+    .sidebar-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sidebar-title::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 2px;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text-color);
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+    .menu-item:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateX(5px);
+        box-shadow: var(--shadow);
+    }
+
+    .menu-item.active {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        box-shadow: var(--shadow);
+    }
+
+    .menu-icon {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+        width: 20px;
+        text-align: center;
+    }
+
+    .menu-text {
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .content-area {
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        padding: 3rem;
+        min-height: 500px;
+    }
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .content-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin: 0;
+    }
+
+    .content-subtitle {
+        color: var(--gray);
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-title::before {
+        content: '';
+        width: 3px;
+        height: 18px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 2px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: 0.9rem;
+    }
+
+    .form-required {
+        color: #ef4444;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .form-input:disabled {
+        background: var(--gray-light);
+        color: var(--gray);
+        cursor: not-allowed;
+    }
+
+    .form-text {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 0.5rem;
+    }
+
+    .form-help {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+        font-style: italic;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .checkbox {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .checkbox:checked {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .checkbox:checked::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .checkbox-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        cursor: pointer;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--border);
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 2px solid transparent;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: white;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--text-color);
+    }
+
+    .btn-outline:hover {
+        background: var(--gray-light);
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background: transparent;
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    .btn-danger:hover {
+        background: #ef4444;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .avatar-upload-section {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding: 2rem;
+        background: var(--gray-light);
+        border-radius: 16px;
+        border: 2px dashed var(--border);
+    }
+
+    .avatar-preview {
+        position: relative;
+    }
+
+    .avatar-actions {
+        flex: 1;
+    }
+
+    .avatar-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .avatar-action-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+    }
+
+    .avatar-action-btn.secondary {
+        background: transparent;
+        border: 2px solid var(--border);
+        color: var(--text-color);
+    }
+
+    .avatar-action-btn.secondary:hover {
+        background: var(--gray-light);
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .current-avatar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .avatar-preview-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary);
+    }
+
+    .error-message {
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    [data-theme="dark"] .error-message {
+        background: #7f1d1d;
+        color: #fca5a5;
+    }
+
+    /* Dark mode adjustments */
+    [data-theme="dark"] .avatar-upload-section {
+        background: var(--bg-secondary);
+    }
+
+    [data-theme="dark"] .form-input {
+        background: var(--bg-secondary);
+    }
+
+    [data-theme="dark"] .btn-outline:hover {
+        background: var(--gray-700);
+    }
+
+    /* Responsive design */
+    @media (max-width: 968px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
         
-        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
-            {% csrf_token %}
-            
-            <div>
-                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-color); font-weight: 500;">
-                    Email Address
-                </label>
-                <input type="email" value="{{ user.email }}" disabled 
-                       style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--gray-light); color: var(--gray);">
-                <small style="color: var(--gray);">Contact admin to change email</small>
-            </div>
-            
-            <!-- Add more fields here when you have a profile model -->
-            
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
-                <button type="submit" class="btn btn-primary" disabled>Save Changes</button>
-                <a href="{% url 'users:profile' %}" class="btn btn-outline">Cancel</a>
-            </div>
-        </form>
+        .sidebar {
+            order: 2;
+        }
         
-        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center;">
-            <p style="color: var(--gray); margin-bottom: 1rem;">Need to make other changes?</p>
-            <a href="{% url 'users:change_password' %}" class="btn btn-outline">Change Password</a>
+        .content-area {
+            order: 1;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 1rem;
+        }
+        
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+        
+        .content-area {
+            padding: 2rem 1.5rem;
+        }
+
+        .avatar-upload-section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .content-area {
+            padding: 1.5rem 1rem;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1rem;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .success-message {
+        background: #d1fae5;
+        color: #059669;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #059669;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    [data-theme="dark"] .success-message {
+        background: #064e3b;
+        color: #86efac;
+    }
+</style>
+
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="avatar-large {% if user.profile.profile_photo %}has-photo{% endif %}" 
+             id="avatarUpload"
+             style="{% if user.profile.profile_photo %}background-image: url('{{ user.profile.profile_photo.url }}');{% endif %}">
+            <div class="avatar-edit-overlay">📷</div>
+            <div class="avatar-text">
+                {{ user.email|first|upper }}
+            </div>
+        </div>
+        <div class="user-info">
+            <h1 class="user-name" id="displayName">
+                {% if user.profile.get_full_name %}
+                    Edit {{ user.profile.get_full_name }}'s Profile
+                {% else %}
+                    Edit Profile
+                {% endif %}
+            </h1>
+            <p class="user-title">Update your personal information</p>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="profile-grid">
+        <!-- Sidebar Menu -->
+        <div class="sidebar">
+            <!-- My Orders Section -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">My Orders</h3>
+                <div class="menu-grid">
+                    <a href="{% url 'users:profile' %}" class="menu-item">
+                        <span class="menu-icon">⏳</span>
+                        <span class="menu-text">Pending Payment</span>
+                        <span class="menu-badge">2</span>
+                    </a>
+                    <a href="{% url 'users:profile' %}" class="menu-item">
+                        <span class="menu-icon">✅</span>
+                        <span class="menu-text">Delivered</span>
+                        <span class="menu-badge">5</span>
+                    </a>
+                    <a href="{% url 'users:profile' %}" class="menu-item">
+                        <span class="menu-icon">🔄</span>
+                        <span class="menu-text">Processing</span>
+                        <span class="menu-badge">1</span>
+                    </a>
+                    <a href="{% url 'users:profile' %}" class="menu-item">
+                        <span class="menu-icon">❌</span>
+                        <span class="menu-text">Cancelled</span>
+                        <span class="menu-badge">0</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Account Section -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Account</h3>
+                <div class="menu-grid">
+                    <a href="{% url 'users:profile_edit' %}" class="menu-item active">
+                        <span class="menu-icon">👤</span>
+                        <span class="menu-text">Edit Profile</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <span class="menu-icon">📦</span>
+                        <span class="menu-text">Shipping Address</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <span class="menu-icon">❤️</span>
+                        <span class="menu-text">Wishlist</span>
+                        <span class="menu-badge">3</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <span class="menu-icon">📞</span>
+                        <span class="menu-text">Customer Care</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="sidebar-section">
+                <a href="{% url 'users:profile' %}" class="btn btn-outline" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
+                    <span class="menu-icon">⬅️</span>
+                    Back to Profile
+                </a>
+                <a href="{% url 'users:logout' %}" class="btn btn-danger" style="width: 100%; justify-content: center;">
+                    <span class="menu-icon">🚪</span>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title">Edit Profile</h2>
+                    <p class="content-subtitle">Update your personal information and preferences</p>
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="success-message">
+                        <span>✅</span>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.errors %}
+                <div class="error-message">
+                    <span>❌</span>
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Profile Picture Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Profile Picture</h3>
+                    <div class="avatar-upload-section">
+                        <div class="avatar-preview">
+                            {% if user.profile.profile_photo %}
+                                <div class="current-avatar">
+                                    <img src="{{ user.profile.profile_photo.url }}" alt="Current avatar" class="avatar-preview-img">
+                                    <div>
+                                        <p style="margin: 0; font-weight: 600;">Current Photo</p>
+                                        <p style="margin: 0; color: var(--gray); font-size: 0.9rem;">Click to change</p>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="avatar-large" id="currentAvatar">
+                                    <div class="avatar-edit-overlay">📷</div>
+                                    <div class="avatar-text">{{ user.email|first|upper }}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="avatar-actions">
+                            <p style="margin-bottom: 1rem; color: var(--text-color);">
+                                Upload a new profile picture. Recommended size: 200x200 pixels.
+                            </p>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <label for="id_profile_photo" class="avatar-action-btn">
+                                    <span>📁</span>
+                                    Choose File
+                                </label>
+                                {% if user.profile.profile_photo %}
+                                <button type="button" class="avatar-action-btn secondary" id="removePhotoBtn">
+                                    <span>🗑️</span>
+                                    Remove
+                                </button>
+                                {% endif %}
+                            </div>
+                            <input type="file" name="profile_photo" id="id_profile_photo" class="file-input" accept="image/*">
+                            <p class="form-help" id="fileName" style="margin-top: 0.5rem;"></p>
+                            {% if form.profile_photo.errors %}
+                                <div class="form-text" style="color: #dc2626;">
+                                    {{ form.profile_photo.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Personal Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="id_first_name" class="form-label">
+                                First Name
+                            </label>
+                            <input type="text" name="first_name" id="id_first_name" class="form-input" 
+                                   value="{{ form.first_name.value|default:'' }}" placeholder="Enter your first name">
+                            {% if form.first_name.errors %}
+                                <div class="form-text" style="color: #dc2626;">
+                                    {{ form.first_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_last_name" class="form-label">
+                                Last Name
+                            </label>
+                            <input type="text" name="last_name" id="id_last_name" class="form-input" 
+                                   value="{{ form.last_name.value|default:'' }}" placeholder="Enter your last name">
+                            {% if form.last_name.errors %}
+                                <div class="form-text" style="color: #dc2626;">
+                                    {{ form.last_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="email" class="form-label">
+                                Email Address
+                            </label>
+                            <input type="email" id="email" class="form-input" value="{{ user.email }}" disabled>
+                            <p class="form-help">Contact administrator to change email address</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_phone" class="form-label">Phone Number</label>
+                            <input type="tel" name="phone" id="id_phone" class="form-input" 
+                                   value="{{ form.phone.value|default:'' }}" placeholder="+1 (555) 000-0000">
+                            {% if form.phone.errors %}
+                                <div class="form-text" style="color: #dc2626;">
+                                    {{ form.phone.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_birthdate" class="form-label">Date of Birth</label>
+                            <input type="date" name="birthdate" id="id_birthdate" class="form-input" 
+                                   value="{{ form.birthdate.value|date:'Y-m-d'|default:'' }}">
+                            {% if form.birthdate.errors %}
+                                <div class="form-text" style="color: #dc2626;">
+                                    {{ form.birthdate.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Preferences</h3>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label class="form-label">Email Notifications</label>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="newsletter" id="id_newsletter" class="checkbox" 
+                                       {% if form.newsletter.value %}checked{% endif %}>
+                                <label for="id_newsletter" class="checkbox-label">Book recommendations and newsletters</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="order_updates" id="id_order_updates" class="checkbox" 
+                                       {% if form.order_updates.value %}checked{% endif %}>
+                                <label for="id_order_updates" class="checkbox-label">Order updates and shipping notifications</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="promotions" id="id_promotions" class="checkbox" 
+                                       {% if form.promotions.value %}checked{% endif %}>
+                                <label for="id_promotions" class="checkbox-label">Special offers and promotions</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_language" class="form-label">Preferred Language</label>
+                            <select name="language" id="id_language" class="form-input">
+                                {% for value, text in form.fields.language.choices %}
+                                    <option value="{{ value }}" {% if form.language.value == value %}selected{% endif %}>
+                                        {{ text }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_currency" class="form-label">Preferred Currency</label>
+                            <select name="currency" id="id_currency" class="form-input">
+                                {% for value, text in form.fields.currency.choices %}
+                                    <option value="{{ value }}" {% if form.currency.value == value %}selected{% endif %}>
+                                        {{ text }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline">
+                        <span>❌</span>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <span>💾</span>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Avatar upload functionality
+        const avatarUpload = document.getElementById('avatarUpload');
+        const avatarInput = document.getElementById('id_profile_photo');
+        const fileName = document.getElementById('fileName');
+        const removePhotoBtn = document.getElementById('removePhotoBtn');
+        
+        avatarUpload.addEventListener('click', function() {
+            avatarInput.click();
+        });
+
+        avatarInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                fileName.textContent = `Selected: ${file.name}`;
+                
+                // Preview the image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarUpload.style.backgroundImage = `url(${e.target.result})`;
+                    avatarUpload.classList.add('has-photo');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove photo functionality
+        if (removePhotoBtn) {
+            removePhotoBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to remove your profile photo?')) {
+                    // Create a hidden field to indicate photo removal
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'remove_photo';
+                    hiddenInput.value = 'true';
+                    document.querySelector('form').appendChild(hiddenInput);
+                    
+                    // Remove preview
+                    avatarUpload.style.backgroundImage = '';
+                    avatarUpload.classList.remove('has-photo');
+                    fileName.textContent = 'Photo will be removed on save';
+                }
+            });
+        }
+
+        // Extract and display username from email
+        function getUsernameFromEmail(email) {
+            return email.split('@')[0];
+        }
+
+        const userEmail = '{{ user.email }}';
+        const username = getUsernameFromEmail(userEmail);
+        const displayNameElement = document.getElementById('displayName');
+        
+        if (displayNameElement && username) {
+            const formattedUsername = username
+                .replace(/[^a-zA-Z0-9]/g, ' ')
+                .replace(/\b\w/g, l => l.toUpperCase())
+                .trim();
+            
+            if (formattedUsername && !displayNameElement.textContent.includes('Edit')) {
+                displayNameElement.textContent = `Edit ${formattedUsername}'s Profile`;
+            }
+        }
+
+        // Menu active state
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                }
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+</script>
 {% endblock %}

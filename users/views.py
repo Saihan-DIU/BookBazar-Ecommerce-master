@@ -6,7 +6,8 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm  # Built-in form
 from django.views import generic
 from django.urls import reverse_lazy
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProfileEditForm
+from .models import UserProfile
 
 # Class-based view for registration (keep your existing one)
 class RegisterView(generic.CreateView):
@@ -61,7 +62,9 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     """User profile view"""
-    # Add context data to pass to template
+    # Get or create user profile
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
     context = {
         'user': request.user,
         'categories': [],  # Add empty categories to avoid template errors
@@ -71,11 +74,32 @@ def profile_view(request):
 
 @login_required
 def profile_edit_view(request):
-    """Edit user profile view"""
+    """Edit user profile view with photo upload"""
+    # Get or create user profile
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            # Handle photo removal
+            if request.POST.get('remove_photo') == 'true':
+                if profile.profile_photo:
+                    profile.profile_photo.delete(save=False)
+                    profile.profile_photo = None
+            
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('users:profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ProfileEditForm(instance=profile)
+    
     context = {
         'user': request.user,
         'categories': [],
         'featured_books': [],
+        'form': form,
     }
     return render(request, 'users/profile_edit.html', context)
 
