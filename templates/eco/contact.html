@@ -1,143 +1,739 @@
-{% extends "eco/base.html" %}
-{% load static %}
+{% extends 'eco/base_common.html' %}
+
+{% block title %}Contact Us - BookBazar{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Contact Page Specific Styles */
+    .contact-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 100px 0 80px 0;
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .contact-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M500 50L550 0L600 50L650 0L700 50L750 0L800 50L850 0L900 50L950 0L1000 50L1000 100L0 100L0 50Z"/></svg>');
+        background-size: cover;
+        background-position: bottom;
+    }
+
+    .contact-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .contact-main {
+        padding: 40px 0;
+    }
+
+    .contact-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.4s ease;
+        border: 1px solid var(--border);
+    }
+
+    .contact-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .contact-form {
+        padding: 50px;
+        position: relative;
+    }
+
+    .contact-form::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 0 20px 0 100px;
+        opacity: 0.05;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .form-label {
+        color: var(--text-color);
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 15px 20px;
+        border: 2px solid var(--border);
+        background: var(--card-bg);
+        color: var(--text-color);
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        background: var(--card-bg);
+        transform: translateY(-2px);
+    }
+
+    .form-control::placeholder {
+        color: #6b7280;
+        opacity: 0.7;
+    }
+
+    .contact-info {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        color: white;
+        padding: 50px;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .contact-info::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="rgba(255,255,255,0.1)"><circle cx="20" cy="20" r="2"/><circle cx="80" cy="40" r="1.5"/><circle cx="40" cy="80" r="1"/><circle cx="70" cy="70" r="1.5"/></svg>');
+    }
+
+    .contact-info-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 35px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .contact-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(10px);
+    }
+
+    .contact-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .contact-icon {
+        background: rgba(255, 255, 255, 0.25);
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        flex-shrink: 0;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .contact-item:hover .contact-icon {
+        background: rgba(255, 255, 255, 0.35);
+        transform: scale(1.1);
+    }
+
+    .contact-details h5 {
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+    }
+
+    .contact-details p {
+        margin: 0;
+        opacity: 0.9;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-contact {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 16px 40px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 1.1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-contact::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-contact:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .btn-contact:hover::before {
+        left: 100%;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+        justify-content: center;
+    }
+
+    .social-link {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .social-link:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    .faq-section {
+        margin-top: 100px;
+        padding: 60px 0;
+        background: var(--gray-light);
+        border-radius: 30px;
+    }
+
+    .faq-item {
+        margin-bottom: 20px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .faq-question {
+        background: var(--card-bg);
+        padding: 25px 30px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        color: var(--text-color);
+        font-size: 1.1rem;
+    }
+
+    .faq-question:hover {
+        background: var(--gray-light);
+    }
+
+    .faq-question i {
+        transition: all 0.3s ease;
+        color: #667eea;
+    }
+
+    .faq-answer {
+        background: var(--gray-light);
+        padding: 0 30px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+
+    .faq-item.active .faq-answer {
+        padding: 0 30px 30px 30px;
+        max-height: 500px;
+    }
+
+    .faq-item.active .faq-question i {
+        transform: rotate(180deg);
+    }
+
+    .map-container {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        padding: 20px;
+    }
+
+    .section-title {
+        position: relative;
+        margin-bottom: 50px;
+        font-weight: 700;
+        color: var(--text-color);
+        font-size: 2.5rem;
+        text-align: center;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+
+    .contact-hero .section-title {
+        color: white;
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+
+    .contact-hero .section-title::after {
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .contact-info .section-title {
+        color: white;
+        text-align: left;
+    }
+
+    .contact-info .section-title::after {
+        background: rgba(255, 255, 255, 0.5);
+        left: 0;
+        transform: none;
+    }
+
+    .subtitle {
+        color: var(--gray);
+        text-align: center;
+        font-size: 1.2rem;
+        margin-bottom: 50px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .contact-hero .subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.3rem;
+    }
+
+    /* Animation classes */
+    .fade-in-up {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .stagger-delay-1 { animation-delay: 0.1s; }
+    .stagger-delay-2 { animation-delay: 0.2s; }
+    .stagger-delay-3 { animation-delay: 0.3s; }
+    .stagger-delay-4 { animation-delay: 0.4s; }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .contact-hero {
+            padding: 80px 0 60px 0;
+        }
+        
+        .contact-hero .section-title {
+            font-size: 2.2rem;
+        }
+        
+        .contact-form, .contact-info {
+            padding: 30px 25px;
+        }
+        
+        .contact-item {
+            flex-direction: column;
+            text-align: center;
+            padding: 25px 20px;
+        }
+        
+        .contact-icon {
+            margin-right: 0;
+            margin-bottom: 15px;
+            width: 50px;
+            height: 50px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        .faq-section {
+            margin-top: 60px;
+            padding: 40px 0;
+            border-radius: 20px;
+        }
+        
+        .map-container {
+            margin-top: 30px;
+            padding: 15px;
+        }
+        
+        .contact-info .section-title {
+            text-align: center;
+        }
+        
+        .contact-info .section-title::after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .contact-hero .section-title {
+            font-size: 1.8rem;
+        }
+        
+        .contact-form, .contact-info {
+            padding: 25px 20px;
+        }
+        
+        .btn-contact {
+            width: 100%;
+            padding: 18px 20px;
+        }
+        
+        .social-links {
+            gap: 10px;
+        }
+        
+        .social-link {
+            width: 45px;
+            height: 45px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-{% load crispy_forms_tags %}
-  <body>
-    <div id="all">
-      <div id="content">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-12">
-              <!-- breadcrumb-->
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="{% url 'eco:EcoIndex' %}">Home</a></li>
-                  <li aria-current="page" class="breadcrumb-item active">Contact</li>
-                </ol>
-              </nav>
-            </div>
-            <div class="col-lg-3">
-              <!--
-              *** PAGES MENU ***
-              _________________________________________________________
-              -->
-              <div class="card sidebar-menu mb-4">
-                <div class="card-header">
-                  <h3 class="h4 card-title">Pages</h3>
-                </div>
-                <div class="card-body">
-                  <ul class="nav nav-pills flex-column">
-                    <li><a href="{% url 'eco:text' %}" class="nav-link">Text page</a></li>
-                    <li><a href="{% url 'eco:contact' %}" class="nav-link">Contact page</a></li>
-                    <li><a href="{% url 'eco:faq' %}" class="nav-link">FAQ</a></li>
-                  </ul>
-                </div>
-              </div>
-              <!-- *** PAGES MENU END ***-->
-              <div class="banner"><a href="#"><img src="{% static 'eco/img/banner.jpg' %}" alt="sales 2014" class="img-fluid"></a></div>
-            </div>
-            <div class="col-lg-9">
-              <div id="contact" class="box">
-                <h1>Contact</h1>
-                <p class="lead">Are you curious about something? Do you have some kind of problem with our products?</p>
-                <p>Please feel free to contact us, our customer service center is working for you 24/7.</p>
-                <hr>
-                <div class="row">
-                  <div class="col-md-4">
-                    <h3><i class="fa fa-map-marker"></i>Address</h3>
-                    <p>13/25 New Avenue<br>New Heaven<br>45Y 73J<br>England<br><strong>Great Britain</strong></p>
-                  </div>
-                  <!-- /.col-sm-4-->
-                  <div class="col-md-4">
-                    <h3><i class="fa fa-phone"></i> Call center</h3>
-                    <p class="text-muted">This number is toll free if calling from Great Britain otherwise we advise you to use the electronic form of communication.</p>
-                    <p><strong>+33 555 444 333</strong></p>
-                  </div>
-                  <!-- /.col-sm-4-->
-                  <div class="col-md-4">
-                    <h3><i class="fa fa-envelope"></i> Electronic support</h3>
-                    <p class="text-muted">Please feel free to write an email to us or to use our electronic ticketing system.</p>
-                    <ul>
-                      <li><strong><a href="mailto:">info@fakeemail.com</a></strong></li>
-                      <li><strong><a href="#">Ticketio</a></strong> - our ticketing support platform</li>
-                    </ul>
-                  </div>
-                  <!-- /.col-sm-4-->
-                </div>
-                <!-- /.row-->
-           
-                <h2>Contact form</h2>
-
-                <form method="POST">
-                  {% csrf_token %}
-                
-                  <div class="row">
-
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" class="form-control" required id="id_email"> 
-                      </div>
-                    </div>
-
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="firstname">Name</label>
-                        <input type="text" name="name" class="form-control" required id="id_name" id="firstname">
-                      </div>
-                    </div>
-            
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <input type="text" name="subject" class="form-control" required id="id_subject">
-                      </div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea name="message" class="form-control" required id="id_name"></textarea>
-                      </div>
-
-                    </div>
-                    <div class="col-md-12 text-center">
-                      <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> Send message</button>
-                    </div>
-                  </div>
-                </form>
-
-                
-              </div>
-            </div>
-            <!-- /.col-md-9-->
-            
-          </div>
+<!-- Contact Hero Section -->
+<section class="contact-hero">
+    <div class="container">
+        <div class="contact-hero-content text-center">
+            <h1 class="section-title fade-in-up">Get In Touch</h1>
+            <p class="subtitle fade-in-up stagger-delay-1">We're here to help you with any questions about our books and services. Let's start a conversation.</p>
         </div>
-      </div>
     </div>
+</section>
 
-    <!--
-    *** COPYRIGHT ***
-    _________________________________________________________
-    -->
-    <div id="copyright">
-      <div class="container">
+<!-- Contact Form & Info Section -->
+<section class="contact-main">
+    <div class="container">
         <div class="row">
-          <div class="col-lg-6 mb-2 mb-lg-0">
-            <p class="text-center text-lg-left">©2019 Your name goes here.</p>
-          </div>
-          <div class="col-lg-6">
-            <p class="text-center text-lg-right">Template design by <a href="https://bootstrapious.com/">Bootstrapious</a>
-              <!-- If you want to remove this backlink, pls purchase an Attribution-free License @ https://bootstrapious.com/p/obaju-e-commerce-template. Big thanks!-->
-            </p>
-          </div>
+            <!-- Contact Form -->
+            <div class="col-lg-8 mb-4">
+                <div class="contact-card fade-in-up stagger-delay-2">
+                    <div class="contact-form">
+                        <h3 class="section-title text-start mb-4">Send us a Message</h3>
+                        <form method="POST" action="{% url 'eco:contact' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Your Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="subject" name="subject" placeholder="What is this regarding?" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message" class="form-label">Your Message</label>
+                                <textarea class="form-control" id="message" name="message" rows="6" placeholder="Tell us how we can help you..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-contact">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="col-lg-4 mb-4">
+                <div class="contact-card h-100 fade-in-up stagger-delay-3">
+                    <div class="contact-info">
+                        <div class="contact-info-content">
+                            <h3 class="section-title mb-4">Get in Touch</h3>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h5>Our Location</h5>
+                                    <p>123 Book Street<br>Literature City, LC 12345</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h5>Phone Number</h5>
+                                    <p>+1 (555) 123-4567</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h5>Email Address</h5>
+                                    <p>support@bookbazar.com</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h5>Business Hours</h5>
+                                    <p>Monday - Friday: 9AM - 6PM<br>Saturday: 10AM - 4PM</p>
+                                </div>
+                            </div>
+                            
+                            <div class="social-links">
+                                <a href="#" class="social-link" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+        
+       <!-- Map Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="map-container fade-in-up stagger-delay-4">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3581.6977316670564!2d90.41113548057906!3d23.79635422691705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c70847c3b119%3A0x37a66ea61ac1ed39!2sLandmark%20JKH%20Complex!5e0!3m2!1sen!2sbd!4v1761552816254!5m2!1sen!2sbd" 
+                width="100%" 
+                height="450" 
+                style="border:0; border-radius: 15px;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+                title="BookBazar Location - Landmark JKH Complex, Bangladesh">
+            </iframe>
+        </div>
     </div>
+</div>
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center mb-5">
+                        <h2 class="section-title">Frequently Asked Questions</h2>
+                        <p class="subtitle">Find quick answers to common questions about our services</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="faq-item active">
+                            <div class="faq-question">
+                                How long does shipping take?
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Standard shipping typically takes 5-7 business days. Express shipping is available for 2-3 business days delivery. International shipping may take 10-14 business days depending on the destination. We provide tracking information for all orders.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                What is your return policy?
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>We accept returns within 30 days of purchase. Books must be in original condition with no damage, writing, or markings. Please contact our support team to initiate a return, and we'll provide you with a return shipping label.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Do you offer international shipping?
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes, we ship to over 50 countries worldwide. Shipping costs and delivery times vary by location. You can calculate exact shipping costs at checkout. Please note that international orders may be subject to customs fees and import duties.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                How can I track my order?
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Once your order ships, you'll receive a tracking number via email. You can also track your order by logging into your account on our website. For any issues with tracking, please contact our customer support team.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
 
-  </body>
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+        
+        // Contact form submission handling
+        const contactForm = document.querySelector('form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                setLoading(submitBtn, true);
+                
+                // Simple form validation
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const subject = document.getElementById('subject').value.trim();
+                const message = document.getElementById('message').value.trim();
+                
+                if (!name || !email || !subject || !message) {
+                    showToast('Please fill in all fields', 'error');
+                    setLoading(submitBtn, false);
+                    return;
+                }
+                
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showToast('Please enter a valid email address', 'error');
+                    setLoading(submitBtn, false);
+                    return;
+                }
+                
+                // Simulate form submission
+                setTimeout(() => {
+                    showToast('Thank you for your message! We will get back to you within 24 hours.', 'success');
+                    this.reset();
+                    setLoading(submitBtn, false);
+                }, 1500);
+            });
+        }
 
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                } 
+            });
+        }, observerOptions);
 
-  
-{% endblock content %}
+        // Observe elements for animation
+        document.querySelectorAll('.contact-card, .map-container, .faq-item').forEach(el => {
+            observer.observe(el);
+        });
+    });
+</script>
+{% endblock %}
