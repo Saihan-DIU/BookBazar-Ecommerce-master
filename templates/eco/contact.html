@@ -3,27 +3,28 @@
 {% block title %}Contact Us - BookBazar{% endblock %}
 
 {% block extra_css %}
+
 <style>
     /* Contact Page Specific Styles */
+
+    /* Define CSS Variables for Light Mode */
+    :root {
+        --card-bg: #ffffff;
+        --text-color: #2d3748;
+        --border: #e2e8f0;
+        --gray-light: #f7fafc;
+        --gray: #718096;
+    }
+
+    /* Contact Page Specific Styles */
     .contact-hero {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+       background: linear-gradient(135deg, rgba(29, 50, 54, 0.85) 0%, rgba(139, 92, 246, 0.8) 100%),
+                        url('https://cdn.pixabay.com/photo/2015/11/19/21/10/glasses-1052010_1280.jpg') center/cover;
         color: white;
         padding: 100px 0 80px 0;
         margin-bottom: 60px;
         position: relative;
         overflow: hidden;
-    }
-
-    .contact-hero::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M500 50L550 0L600 50L650 0L700 50L750 0L800 50L850 0L900 50L950 0L1000 50L1000 100L0 100L0 50Z"/></svg>');
-        background-size: cover;
-        background-position: bottom;
     }
 
     .contact-hero-content {
@@ -242,6 +243,23 @@
         transform: translateY(-5px) scale(1.1);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         color: white;
+    }
+
+    /* Social Media Brand Colors on Hover */
+    .social-link.facebook:hover {
+        background: #1877f2;
+    }
+
+    .social-link.twitter:hover {
+        background: #1da1f2;
+    }
+
+    .social-link.instagram:hover {
+        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+
+    .social-link.linkedin:hover {
+        background: #0077b5;
     }
 
     .faq-section {
@@ -534,7 +552,7 @@
                                 </div>
                                 <div class="contact-details">
                                     <h5>Our Location</h5>
-                                    <p>123 Book Street<br>Literature City, LC 12345</p>
+                                    <p>Block A, Gulshan Square<br>Gulshan 2, Dhaka 1200</p>
                                 </div>
                             </div>
                             <div class="contact-item">
@@ -543,7 +561,7 @@
                                 </div>
                                 <div class="contact-details">
                                     <h5>Phone Number</h5>
-                                    <p>+1 (555) 123-4567</p>
+                                    <p>+8809658306642</p>
                                 </div>
                             </div>
                             <div class="contact-item">
@@ -566,16 +584,16 @@
                             </div>
                             
                             <div class="social-links">
-                                <a href="#" class="social-link" title="Facebook">
+                                <a href="#" class="social-link facebook" title="Facebook">
                                     <i class="fab fa-facebook-f"></i>
                                 </a>
-                                <a href="#" class="social-link" title="Twitter">
+                                <a href="#" class="social-link twitter" title="Twitter">
                                     <i class="fab fa-twitter"></i>
                                 </a>
-                                <a href="#" class="social-link" title="Instagram">
+                                <a href="#" class="social-link instagram" title="Instagram">
                                     <i class="fab fa-instagram"></i>
                                 </a>
-                                <a href="#" class="social-link" title="LinkedIn">
+                                <a href="https://www.linkedin.com/in/md-saihan-alam-b56117253?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-link linkedin" title="LinkedIn" target="_blank">
                                     <i class="fab fa-linkedin-in"></i>
                                 </a>
                             </div>
@@ -685,7 +703,6 @@
                 e.preventDefault();
                 
                 const submitBtn = this.querySelector('button[type="submit"]');
-                setLoading(submitBtn, true);
                 
                 // Simple form validation
                 const name = document.getElementById('name').value.trim();
@@ -694,25 +711,19 @@
                 const message = document.getElementById('message').value.trim();
                 
                 if (!name || !email || !subject || !message) {
-                    showToast('Please fill in all fields', 'error');
-                    setLoading(submitBtn, false);
+                    this.submit(); // Let Django handle the validation
                     return;
                 }
                 
                 // Email validation
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    showToast('Please enter a valid email address', 'error');
-                    setLoading(submitBtn, false);
+                    this.submit(); // Let Django handle the validation
                     return;
                 }
                 
-                // Simulate form submission
-                setTimeout(() => {
-                    showToast('Thank you for your message! We will get back to you within 24 hours.', 'success');
-                    this.reset();
-                    setLoading(submitBtn, false);
-                }, 1500);
+                // If all validations pass, submit the form
+                this.submit();
             });
         }
 
@@ -734,6 +745,46 @@
         document.querySelectorAll('.contact-card, .map-container, .faq-item').forEach(el => {
             observer.observe(el);
         });
+
+        // Simple toast notification function
+        function showToast(message, type = 'info') {
+            // Check if toast container exists, if not create one
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toastEl = document.createElement('div');
+            toastEl.className = `toast align-items-center text-bg-${type === 'error' ? 'danger' : type} border-0`;
+            toastEl.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toastEl);
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+            
+            // Remove toast from DOM after it's hidden
+            toastEl.addEventListener('hidden.bs.toast', () => {
+                toastEl.remove();
+            });
+        }
+
+        // Loading state function
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+            } else {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send Message';
+            }
+        }
     });
 </script>
 {% endblock %}
