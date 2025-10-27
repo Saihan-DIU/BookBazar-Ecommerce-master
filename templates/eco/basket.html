@@ -712,39 +712,9 @@
         {% endif %}
     </div>
 </div>
+ {% include 'eco/footer.html' %}
 
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>BookBazar</h3>
-                <p>Your one-stop destination for all your reading needs. Quality books, amazing prices, and exceptional service.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul class="footer-links">
-                    <li><a href="{% url 'eco:home' %}">Home</a></li>
-                    <li><a href="{% url 'eco:product-list' %}">Shop</a></li>
-                    <li><a href="{% url 'eco:contact' %}">Contact Us</a></li>
-                    <li><a href="{% url 'eco:faq' %}">FAQ</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Customer Service</h3>
-                <ul class="footer-links">
-                    <li><a href="{% url 'eco:customer-account' %}">My Account</a></li>
-                    <li><a href="#">Order Tracking</a></li>
-                    <li><a href="{% url 'eco:wish-summary' %}">Wishlist</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 BookBazar. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+
 {% endblock %}
 {% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
