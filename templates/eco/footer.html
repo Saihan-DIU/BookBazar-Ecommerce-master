@@ -1,510 +1,610 @@
 <!-- eco/footer.html -->
 <style>
-    /* Footer Styles - Using base.html dark mode colors */
-    .bookbazar-footer-section {
-        background: var(--bg-color, #0f172a); /* Use CSS variable with fallback */
-        color: var(--text-color, #f8fafc);
-        padding: 20px 0 10px;
-        margin-top: 30px;
-        position: relative;
-        width: 100%;
-        border-top: 3px solid;
-        border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
-    }
+  /* Footer Styles - Using base.html dark mode colors */
+  .bookbazar-footer-section {
+    background: #0f172a; /* Dark mode background */
+    color: #f8fafc;
+    padding: 20px 0 10px;
+    margin-top: 30px;
+    position: relative;
+    width: 100%;
+    border-top: 3px solid;
+    border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+  }
 
-    .bookbazar-footer-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
+  /* Light mode support */
+  [data-theme="light"] .bookbazar-footer-section {
+    background: #ffffff;
+    color: #1f2937;
+  }
 
+  .bookbazar-footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .bookbazar-footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+
+  .bookbazar-footer-logo h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+  }
+
+  .bookbazar-footer-logo p {
+    color: #b0b0b0;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+  }
+
+  [data-theme="light"] .bookbazar-footer-logo p {
+    color: #6b7280;
+  }
+
+  /* Social Links in Company Section */
+  .bookbazar-company-social {
+    margin-top: 10px;
+  }
+
+  .bookbazar-company-social h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #f8fafc;
+  }
+
+  [data-theme="light"] .bookbazar-company-social h4 {
+    color: #1f2937;
+  }
+
+  .bookbazar-company-social-links {
+    display: flex;
+    gap: 8px;
+  }
+
+  .bookbazar-company-social-link {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid #444;
+    font-size: 0.8rem;
+  }
+
+  [data-theme="light"] .bookbazar-company-social-link {
+    background: #ffffff;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+  }
+
+  .bookbazar-company-social-link:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+  }
+
+  .bookbazar-footer-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #f8fafc;
+    position: relative;
+  }
+
+  [data-theme="light"] .bookbazar-footer-heading {
+    color: #1f2937;
+  }
+
+  .bookbazar-footer-heading::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 25px;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .bookbazar-footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .bookbazar-footer-links li {
+    margin-bottom: 6px;
+  }
+
+  .bookbazar-footer-links a {
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+
+  [data-theme="light"] .bookbazar-footer-links a {
+    color: #6b7280;
+  }
+
+  .bookbazar-footer-links a:hover {
+    color: #667eea;
+    transform: translateX(3px);
+  }
+
+  .bookbazar-footer-links a i {
+    margin-right: 5px;
+    font-size: 0.75rem;
+  }
+
+  .bookbazar-contact-info {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .bookbazar-contact-info li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    color: #b0b0b0;
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+
+  [data-theme="light"] .bookbazar-contact-info li {
+    color: #6b7280;
+  }
+
+  .bookbazar-contact-info li i {
+    margin-right: 6px;
+    color: #667eea;
+    font-size: 0.9rem;
+    margin-top: 1px;
+    min-width: 12px;
+  }
+
+  /* Newsletter Section */
+  .bookbazar-newsletter-full {
+    grid-column: 1 / -1;
+    background: rgba(30, 41, 59, 0.8);
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-top: 5px;
+    border: 1px solid #444;
+  }
+
+  [data-theme="light"] .bookbazar-newsletter-full {
+    background: rgba(248, 250, 252, 0.8);
+    border: 1px solid #e5e7eb;
+  }
+
+  .bookbazar-newsletter-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .bookbazar-newsletter-text h4 {
+    color: #f8fafc;
+    margin-bottom: 3px;
+    font-size: 1rem;
+  }
+
+  [data-theme="light"] .bookbazar-newsletter-text h4 {
+    color: #1f2937;
+  }
+
+  .bookbazar-newsletter-text p {
+    color: #b0b0b0;
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  [data-theme="light"] .bookbazar-newsletter-text p {
+    color: #6b7280;
+  }
+
+  .bookbazar-newsletter-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .bookbazar-newsletter-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #1e293b;
+    color: #f8fafc;
+    font-size: 0.85rem;
+    font-family: inherit;
+    height: 38px;
+    min-width: 200px;
+  }
+
+  [data-theme="light"] .bookbazar-newsletter-input {
+    background: #ffffff;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
+  }
+
+  .bookbazar-newsletter-input:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+
+  .bookbazar-newsletter-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-family: inherit;
+    white-space: nowrap;
+    height: 38px;
+    font-size: 0.85rem;
+  }
+
+  .bookbazar-newsletter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+  }
+
+  /* Copyright Section - Full Width */
+  .bookbazar-copyright-full {
+    background: #0f172a;
+    padding: 15px 0;
+    margin-top: 20px;
+    border-top: 1px solid #444;
+    width: 100%;
+  }
+
+  [data-theme="light"] .bookbazar-copyright-full {
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .bookbazar-copyright-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .bookbazar-copyright {
+    font-size: 0.8rem;
+    color: #b0b0b0;
+    margin: 0;
+  }
+
+  [data-theme="light"] .bookbazar-copyright {
+    color: #6b7280;
+  }
+
+  /* Back to Top Button */
+  .bookbazar-back-to-top {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+    z-index: 1000;
+    font-family: inherit;
+  }
+
+  .bookbazar-back-to-top:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
     .bookbazar-footer-content {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1.5fr;
-        gap: 20px;
-        margin-bottom: 0;
-    }
-
-    .bookbazar-footer-logo h3 {
-        font-size: 1.3rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 5px;
-    }
-
-    .bookbazar-footer-logo p {
-        color: var(--gray, #b0b0b0);
-        line-height: 1.4;
-        margin-bottom: 10px;
-        font-size: 0.85rem;
-    }
-
-    .bookbazar-footer-heading {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 10px;
-        color: var(--text-color, #f8fafc);
-        position: relative;
-    }
-
-    .bookbazar-footer-heading::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        width: 25px;
-        height: 2px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .bookbazar-footer-links {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .bookbazar-footer-links li {
-        margin-bottom: 6px;
-    }
-
-    .bookbazar-footer-links a {
-        color: var(--gray, #b0b0b0);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        font-size: 0.85rem;
-    }
-
-    .bookbazar-footer-links a:hover {
-        color: var(--primary, #667eea);
-        transform: translateX(3px);
-    }
-
-    .bookbazar-footer-links a i {
-        margin-right: 5px;
-        font-size: 0.75rem;
-    }
-
-    .bookbazar-contact-info {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .bookbazar-contact-info li {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 8px;
-        color: var(--gray, #b0b0b0);
-        font-size: 0.85rem;
-        line-height: 1.3;
-    }
-
-    .bookbazar-contact-info li i {
-        margin-right: 6px;
-        color: var(--primary, #667eea);
-        font-size: 0.9rem;
-        margin-top: 1px;
-        min-width: 12px;
-    }
-
-    /* Newsletter Section */
-    .bookbazar-newsletter-full {
-        grid-column: 1 / -1;
-        background: var(--card-bg, rgba(30, 41, 59, 0.8));
-        padding: 12px 20px;
-        border-radius: 6px;
-        margin-top: 5px;
-        border: 1px solid var(--border, #444);
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
     }
 
     .bookbazar-newsletter-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .bookbazar-newsletter-text h4 {
-        color: var(--text-color, #f8fafc);
-        margin-bottom: 3px;
-        font-size: 1rem;
-    }
-
-    .bookbazar-newsletter-text p {
-        color: var(--gray, #b0b0b0);
-        margin: 0;
-        font-size: 0.8rem;
-        line-height: 1.2;
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
     }
 
     .bookbazar-newsletter-form {
-        display: flex;
-        gap: 8px;
-        align-items: center;
+      width: 100%;
+      justify-content: center;
     }
 
     .bookbazar-newsletter-input {
-        flex: 1;
-        padding: 8px 12px;
-        border: 1px solid var(--border, #444);
-        border-radius: 6px;
-        background: var(--card-bg, #1e293b);
-        color: var(--text-color, #f8fafc);
-        font-size: 0.85rem;
-        font-family: inherit;
-        height: 38px;
-        min-width: 200px;
+      min-width: 150px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .bookbazar-footer-section {
+      padding: 15px 0 8px;
     }
 
-    .bookbazar-newsletter-input:focus {
-        outline: none;
-        border-color: var(--primary, #667eea);
+    .bookbazar-footer-content {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .bookbazar-back-to-top {
+      bottom: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      font-size: 0.8rem;
+    }
+
+    .bookbazar-newsletter-full {
+      padding: 10px 15px;
+    }
+
+    .bookbazar-newsletter-form {
+      flex-direction: column;
+      width: 100%;
     }
 
     .bookbazar-newsletter-btn {
-        padding: 8px 16px;
-        background: linear-gradient(135deg, var(--primary, #667eea) 0%, var(--accent, #764ba2) 100%);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        font-family: inherit;
-        white-space: nowrap;
-        height: 38px;
-        font-size: 0.85rem;
+      width: 100%;
     }
 
-    .bookbazar-newsletter-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+    .bookbazar-company-social-links {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .bookbazar-footer-section {
+      padding: 12px 0 6px;
     }
 
-    /* Social Media Section */
-    .bookbazar-social-section {
-        grid-column: 1 / -1;
-        background: var(--card-bg, rgba(30, 41, 59, 0.6));
-        padding: 12px 20px;
-        border-radius: 6px;
-        margin-top: 5px;
-        border: 1px solid var(--border, #444);
+    .bookbazar-footer-heading {
+      font-size: 0.9rem;
     }
 
-    .bookbazar-social-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
+    .bookbazar-newsletter-full {
+      padding: 8px 12px;
     }
 
-    .bookbazar-social-text h4 {
-        color: var(--text-color, #f8fafc);
-        margin-bottom: 3px;
-        font-size: 1rem;
+    .bookbazar-newsletter-text h4 {
+      font-size: 0.9rem;
     }
 
-    .bookbazar-social-text p {
-        color: var(--gray, #b0b0b0);
-        margin: 0;
-        font-size: 0.8rem;
-        line-height: 1.2;
+    .bookbazar-newsletter-text p {
+      font-size: 0.75rem;
     }
-
-    .bookbazar-social-links {
-        display: flex;
-        gap: 8px;
-    }
-
-    .bookbazar-social-link {
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        background: var(--card-bg, #1e293b);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--gray, #b0b0b0);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: 1px solid var(--border, #444);
-        font-size: 0.8rem;
-    }
-
-    .bookbazar-social-link:hover {
-        background: linear-gradient(135deg, var(--primary, #667eea) 0%, var(--accent, #764ba2) 100%);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
-    }
-
-    /* Back to Top Button */
-    .bookbazar-back-to-top {
-        position: fixed;
-        bottom: 15px;
-        right: 15px;
-        width: 35px;
-        height: 35px;
-        background: linear-gradient(135deg, var(--primary, #667eea) 0%, var(--accent, #764ba2) 100%);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-        box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
-        z-index: 1000;
-        font-family: inherit;
-    }
-
-    .bookbazar-back-to-top:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-        .bookbazar-footer-content {
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        .bookbazar-newsletter-content,
-        .bookbazar-social-content {
-            flex-direction: column;
-            text-align: center;
-            gap: 12px;
-        }
-        
-        .bookbazar-newsletter-form {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .bookbazar-newsletter-input {
-            min-width: 150px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .bookbazar-footer-section {
-            padding: 15px 0 8px;
-        }
-
-        .bookbazar-footer-content {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .bookbazar-back-to-top {
-            bottom: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            font-size: 0.8rem;
-        }
-        
-        .bookbazar-newsletter-full,
-        .bookbazar-social-section {
-            padding: 10px 15px;
-        }
-        
-        .bookbazar-newsletter-form {
-            flex-direction: column;
-            width: 100%;
-        }
-        
-        .bookbazar-newsletter-btn {
-            width: 100%;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .bookbazar-footer-section {
-            padding: 12px 0 6px;
-        }
-
-        .bookbazar-footer-heading {
-            font-size: 0.9rem;
-        }
-
-        .bookbazar-social-links {
-            justify-content: center;
-        }
-        
-        .bookbazar-newsletter-full,
-        .bookbazar-social-section {
-            padding: 8px 12px;
-        }
-        
-        .bookbazar-newsletter-text h4,
-        .bookbazar-social-text h4 {
-            font-size: 0.9rem;
-        }
-        
-        .bookbazar-newsletter-text p,
-        .bookbazar-social-text p {
-            font-size: 0.75rem;
-        }
-    }
+  }
 </style>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <footer class="bookbazar-footer-section">
-    <div class="bookbazar-footer-container">
-        <div class="bookbazar-footer-content">
-            <!-- Company Info -->
-            <div class="bookbazar-footer-about">
-                <div class="bookbazar-footer-logo">
-                    <h3>BookBazar</h3>
-                    <p>Your trusted partner for quality books and educational resources. Discover your next favorite read with us.</p>
-                </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="bookbazar-footer-section-inner">
-                <h4 class="bookbazar-footer-heading">Quick Links</h4>
-                <ul class="bookbazar-footer-links">
-                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="/products/"><i class="fas fa-book"></i> All Books</a></li>
-                    <li><a href="/about/"><i class="fas fa-info-circle"></i> About Us</a></li>
-                    <li><a href="/contact/"><i class="fas fa-envelope"></i> Contact</a></li>
-                </ul>
-            </div>
-
-            <!-- Categories -->
-            <div class="bookbazar-footer-section-inner">
-                <h4 class="bookbazar-footer-heading">Categories</h4>
-                <ul class="bookbazar-footer-links">
-                    <li><a href="#"><i class="fas fa-graduation-cap"></i> Academic</a></li>
-                    <li><a href="#"><i class="fas fa-heart"></i> Fiction</a></li>
-                    <li><a href="#"><i class="fas fa-chart-line"></i> Business</a></li>
-                    <li><a href="#"><i class="fas fa-laptop-code"></i> Technology</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="bookbazar-footer-section-inner">
-                <h4 class="bookbazar-footer-heading">Contact Info</h4>
-                <ul class="bookbazar-contact-info">
-                    <li>
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Block A, Gulshan Square, Gulshan 2, Dhaka 1200</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-phone"></i>
-                        <span>+8809658306642</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-envelope"></i>
-                        <span>support@bookbazar.com</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Newsletter Section -->
-            <div class="bookbazar-newsletter-full">
-                <div class="bookbazar-newsletter-content">
-                    <div class="bookbazar-newsletter-text">
-                        <h4>Stay Updated</h4>
-                        <p>Subscribe to get the latest books and exclusive offers</p>
-                    </div>
-                    <form class="bookbazar-newsletter-form">
-                        <input type="email" class="bookbazar-newsletter-input" placeholder="Your email address" required>
-                        <button type="submit" class="bookbazar-newsletter-btn">
-                            Subscribe
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Social Media Section -->
-            <div class="bookbazar-social-section">
-                <div class="bookbazar-social-content">
-                    <div class="bookbazar-social-text">
-                        <h4>Follow Us</h4>
-                        <p>Stay connected for updates and new arrivals</p>
-                    </div>
-                    <div class="bookbazar-social-links">
-                        <a href="#" class="bookbazar-social-link" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="bookbazar-social-link" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="bookbazar-social-link" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/md-saihan-alam-b56117253" class="bookbazar-social-link" title="LinkedIn" target="_blank">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="bookbazar-social-link" title="YouTube">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+  <div class="bookbazar-footer-container">
+    <div class="bookbazar-footer-content">
+      <!-- Company Info with Social Links -->
+      <div class="bookbazar-footer-about">
+        <div class="bookbazar-footer-logo">
+          <h3>BookBazar</h3>
+          <p>
+            Your trusted partner for quality books and educational resources.
+            Discover your next favorite read with us.
+          </p>
         </div>
+        <div class="bookbazar-company-social">
+          <h4>Follow Us</h4>
+          <div class="bookbazar-company-social-links">
+            <a href="#" class="bookbazar-company-social-link" title="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="bookbazar-company-social-link" title="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="bookbazar-company-social-link" title="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/md-saihan-alam-b56117253"
+              class="bookbazar-company-social-link"
+              title="LinkedIn"
+              target="_blank"
+            >
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="bookbazar-company-social-link" title="YouTube">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="bookbazar-footer-section-inner">
+        <h4 class="bookbazar-footer-heading">Quick Links</h4>
+        <ul class="bookbazar-footer-links">
+          <li>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+          </li>
+          <li>
+            <a href="/products/"><i class="fas fa-book"></i> All Books</a>
+          </li>
+          <li>
+            <a href="/about/"><i class="fas fa-info-circle"></i> About Us</a>
+          </li>
+          <li>
+            <a href="/contact/"><i class="fas fa-envelope"></i> Contact</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div class="bookbazar-footer-section-inner">
+        <h4 class="bookbazar-footer-heading">Categories</h4>
+        <ul class="bookbazar-footer-links">
+          <li>
+            <a href="#"><i class="fas fa-graduation-cap"></i> Academic</a>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-heart"></i> Fiction</a>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-chart-line"></i> Business</a>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Technology</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="bookbazar-footer-section-inner">
+        <h4 class="bookbazar-footer-heading">Contact Info</h4>
+        <ul class="bookbazar-contact-info">
+          <li>
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Block A, Gulshan Square, Gulshan 2, Dhaka 1200</span>
+          </li>
+          <li>
+            <i class="fas fa-phone"></i>
+            <span>+8809658306642</span>
+          </li>
+          <li>
+            <i class="fas fa-envelope"></i>
+            <span>support@bookbazar.com</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter Section -->
+      <div class="bookbazar-newsletter-full">
+        <div class="bookbazar-newsletter-content">
+          <div class="bookbazar-newsletter-text">
+            <h4>Stay Updated</h4>
+            <p>Subscribe to get the latest books and exclusive offers</p>
+          </div>
+          <form class="bookbazar-newsletter-form">
+            <input
+              type="email"
+              class="bookbazar-newsletter-input"
+              placeholder="Your email address"
+              required
+            />
+            <button type="submit" class="bookbazar-newsletter-btn">
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Full Width Copyright Section -->
+  <div class="bookbazar-copyright-full">
+    <div class="bookbazar-copyright-container">
+      <p class="bookbazar-copyright">© 2025 BookBazar. All Rights Reserved.</p>
+    </div>
+  </div>
 </footer>
 
 <!-- Back to Top Button -->
 <button class="bookbazar-back-to-top" id="bookbazarBackToTop">
-    <i class="fas fa-chevron-up"></i>
+  <i class="fas fa-chevron-up"></i>
 </button>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Back to Top Button
-        const backToTopButton = document.getElementById('bookbazarBackToTop');
-        
-        if (backToTopButton) {
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTopButton.style.display = 'flex';
-                } else {
-                    backToTopButton.style.display = 'none';
-                }
-            });
+  document.addEventListener("DOMContentLoaded", function () {
+    // Back to Top Button
+    const backToTopButton = document.getElementById("bookbazarBackToTop");
 
-            backToTopButton.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
+    if (backToTopButton) {
+      window.addEventListener("scroll", function () {
+        if (window.pageYOffset > 300) {
+          backToTopButton.style.display = "flex";
+        } else {
+          backToTopButton.style.display = "none";
         }
+      });
 
-        // Newsletter Form Submission
-        const newsletterForm = document.querySelector('.bookbazar-newsletter-form');
-        if (newsletterForm) {
-            newsletterForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const emailInput = this.querySelector('.bookbazar-newsletter-input');
-                const email = emailInput.value.trim();
-                
-                if (email) {
-                    const submitBtn = this.querySelector('.bookbazar-newsletter-btn');
-                    const originalText = submitBtn.innerHTML;
-                    
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                    submitBtn.disabled = true;
-                    
-                    setTimeout(() => {
-                        alert('Thank you for subscribing to our newsletter!');
-                        emailInput.value = '';
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }, 1500);
-                }
-            });
+      backToTopButton.addEventListener("click", function () {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+    }
+
+    // Newsletter Form Submission
+    const newsletterForm = document.querySelector(".bookbazar-newsletter-form");
+    if (newsletterForm) {
+      newsletterForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const emailInput = this.querySelector(".bookbazar-newsletter-input");
+        const email = emailInput.value.trim();
+
+        if (email) {
+          const submitBtn = this.querySelector(".bookbazar-newsletter-btn");
+          const originalText = submitBtn.innerHTML;
+
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+          submitBtn.disabled = true;
+
+          setTimeout(() => {
+            // Create success message
+            const successMsg = document.createElement('div');
+            successMsg.innerHTML = '✅ Thank you for subscribing!';
+            successMsg.style.cssText = 'color: #10b981; font-size: 0.8rem; margin-top: 8px; text-align: center;';
+            this.appendChild(successMsg);
+            
+            // Reset form
+            emailInput.value = '';
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+
+            // Remove message after 3 seconds
+            setTimeout(() => {
+              successMsg.remove();
+            }, 3000);
+          }, 1500);
         }
-    });
+      });
+    }
+  });
 </script>
