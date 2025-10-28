@@ -103,14 +103,11 @@ class Cart(models.Model):
     def final_total(self):
         return self.subtotal - self.total_discount
 
-    @property
-    def tax(self):
-        """Calculate tax (8% example)"""
-        return round(self.final_total * 0.08, 2)
+  
 
     @property
     def grand_total(self):
-        return self.final_total + self.tax
+        return self.final_total 
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')

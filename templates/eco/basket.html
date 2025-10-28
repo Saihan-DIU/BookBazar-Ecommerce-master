@@ -570,6 +570,23 @@
         }
     }
 
+    /* Promo message styles */
+#promoMessage.success {
+    color: #27ae60;
+    font-weight: 500;
+}
+
+#promoMessage.error {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+/* Loading state for promo button */
+#applyPromoBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
     /* Animation */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
@@ -696,23 +713,21 @@
                 <span class="summary-value">FREE</span>
             </div>
             
-            <div class="summary-row">
-                <span class="summary-label">Tax</span>
-                <span class="summary-value" id="tax">${{ cart.tax|floatformat:2 }}</span>
-            </div>
+           
             
             <div class="summary-total">
                 <span class="summary-label">Total</span>
                 <span class="summary-value" id="finalTotal">${{ cart.grand_total|floatformat:2 }}</span>
             </div>
             
-            <div class="promo-section">
-                <p>Have a promo code?</p>
-                <div class="promo-input">
-                    <input type="text" placeholder="Enter promo code">
-                    <button>Apply</button>
-                </div>
-            </div>
+          <div class="promo-section">
+    <p>Have a promo code?</p>
+    <div class="promo-input">
+        <input type="text" id="promoCodeInput" placeholder="Enter promo code">
+        <button id="applyPromoBtn">Apply</button>
+    </div>
+    <div id="promoMessage" style="margin-top: 10px; font-size: 14px;"></div>
+</div>
             
             <button class="checkout-btn" onclick="window.location.href='{% url 'eco:checkout' %}'">
                 Proceed to Checkout <i class="fas fa-arrow-right"></i>
@@ -801,7 +816,7 @@
         const totalDiscountElement = document.getElementById('totalDiscount');
         const finalTotalElement = document.getElementById('finalTotal');
         const itemCountElement = document.getElementById('itemCount');
-        const taxElement = document.getElementById('tax');
+        
 
         if (subtotalElement) subtotalElement.textContent = `$${data.subtotal.toFixed(2)}`;
         if (totalDiscountElement && data.total_discount > 0) {
@@ -810,9 +825,7 @@
         if (finalTotalElement) finalTotalElement.textContent = `$${data.final_total.toFixed(2)}`;
         if (itemCountElement) itemCountElement.textContent = `${data.total_items} item${data.total_items !== 1 ? 's' : ''}`;
         
-        // Update tax
-        const tax = data.final_total * 0.08;
-        if (taxElement) taxElement.textContent = `$${tax.toFixed(2)}`;
+       
 
         // Update cart count in navbar
         const cartCountElements = document.querySelectorAll('.cart-count');
@@ -847,84 +860,127 @@
         }
     }
 
-    // Initialize event listeners when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Cart page loaded, initializing event listeners...');
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Cart page loaded, initializing everything...');
+    
+    // ===== COUPON FUNCTIONALITY =====
+    const applyPromoBtn = document.getElementById('applyPromoBtn');
+    const promoCodeInput = document.getElementById('promoCodeInput');
+    const promoMessage = document.getElementById('promoMessage');
+
+    if (applyPromoBtn) {
+        applyPromoBtn.addEventListener('click', applyPromoCode);
         
-        // Delegate events to the container for dynamic elements
-        const cartContainer = document.getElementById('cartItemsContainer');
-        if (cartContainer) {
-            cartContainer.addEventListener('click', function(e) {
-                console.log('Click event:', e.target);
-                
-                // Handle increase button
-                if (e.target.classList.contains('increase-btn')) {
-                    const itemId = e.target.getAttribute('data-item-id');
-                    console.log('Increase clicked for item:', itemId);
-                    updateCartItem(itemId, 'increase');
-                    return;
-                }
-                
-                // Handle decrease button
-                if (e.target.classList.contains('decrease-btn')) {
-                    const itemId = e.target.getAttribute('data-item-id');
-                    console.log('Decrease clicked for item:', itemId);
-                    updateCartItem(itemId, 'decrease');
-                    return;
-                }
-                
-                // Handle remove button
-                if (e.target.classList.contains('remove-btn')) {
-                    const itemId = e.target.getAttribute('data-item-id');
-                    console.log('Remove clicked for item:', itemId);
-                   
-                       updateCartItem(itemId, 'remove');
-                
-                    return;
-                }
-                
-                // Check if click was on a child of the buttons
-                const increaseBtn = e.target.closest('.increase-btn');
-                if (increaseBtn) {
-                    const itemId = increaseBtn.getAttribute('data-item-id');
-                    console.log('Increase (child) clicked for item:', itemId);
-                    updateCartItem(itemId, 'increase');
-                    return;
-                }
-                
-                const decreaseBtn = e.target.closest('.decrease-btn');
-                if (decreaseBtn) {
-                    const itemId = decreaseBtn.getAttribute('data-item-id');
-                    console.log('Decrease (child) clicked for item:', itemId);
-                    updateCartItem(itemId, 'decrease');
-                    return;
-                }
-                
-                const removeBtn = e.target.closest('.remove-btn');
-                if (removeBtn) {
-                    const itemId = removeBtn.getAttribute('data-item-id');
-                    console.log('Remove (child) clicked for item:', itemId);
-                    if (confirm('Are you sure you want to remove this item from your cart?')) {
-                        updateCartItem(itemId, 'remove');
-                    }
-                    return;
-                }
-            });
-        } else {
-            console.error('Cart container not found!');
+        // Also allow Enter key to apply promo code
+        promoCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyPromoCode();
+            }
+        });
+    }
+
+    async function applyPromoCode() {
+        const promoCode = promoCodeInput.value.trim();
+        
+        if (!promoCode) {
+            showPromoMessage('Please enter a promo code', 'error');
+            return;
         }
 
-        // Add loading states
-        document.querySelectorAll('.quantity-btn, .remove-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.classList.add('loading');
-                setTimeout(() => {
-                    this.classList.remove('loading');
-                }, 1000);
+        // Show loading state
+        applyPromoBtn.innerHTML = 'Applying...';
+        applyPromoBtn.disabled = true;
+
+        try {
+            const response = await fetch('{% url "eco:apply-promo-code" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: JSON.stringify({ promo_code: promoCode })
             });
+
+            const data = await response.json();
+            console.log('Coupon response:', data);
+
+            if (data.success) {
+                showPromoMessage(data.message, 'success');
+                promoCodeInput.value = '';
+                
+                // Update cart totals if provided
+                if (data.cart_data) {
+                    updateCartDisplay(data.cart_data);
+                }
+            } else {
+                showPromoMessage(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error applying promo code:', error);
+            showPromoMessage('An error occurred. Please try again.', 'error');
+        } finally {
+            // Reset button
+            applyPromoBtn.innerHTML = 'Apply';
+            applyPromoBtn.disabled = false;
+        }
+    }
+
+    function showPromoMessage(message, type) {
+        if (!promoMessage) return;
+        
+        promoMessage.textContent = message;
+        promoMessage.className = type;
+    }
+
+    // ===== CART EVENT LISTENERS =====
+    // Delegate events to the container for dynamic elements
+    const cartContainer = document.getElementById('cartItemsContainer');
+    if (cartContainer) {
+        cartContainer.addEventListener('click', function(e) {
+            console.log('Click event:', e.target);
+            
+            // Handle remove button - NO CONFIRMATION
+            const removeBtn = e.target.closest('.remove-btn');
+            if (removeBtn) {
+                const itemId = removeBtn.getAttribute('data-item-id');
+                console.log('Remove clicked for item:', itemId);
+                updateCartItem(itemId, 'remove');
+                return;
+            }
+            
+            // Handle increase button
+            const increaseBtn = e.target.closest('.increase-btn');
+            if (increaseBtn) {
+                const itemId = increaseBtn.getAttribute('data-item-id');
+                console.log('Increase clicked for item:', itemId);
+                updateCartItem(itemId, 'increase');
+                return;
+            }
+            
+            // Handle decrease button
+            const decreaseBtn = e.target.closest('.decrease-btn');
+            if (decreaseBtn) {
+                const itemId = decreaseBtn.getAttribute('data-item-id');
+                console.log('Decrease clicked for item:', itemId);
+                updateCartItem(itemId, 'decrease');
+                return;
+            }
+        });
+    } else {
+        console.error('Cart container not found!');
+    }
+
+    // Add loading states
+    document.querySelectorAll('.quantity-btn, .remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.add('loading');
+            setTimeout(() => {
+                this.classList.remove('loading');
+            }, 1000);
         });
     });
-
+});
     // Add to wishlist function
     function addToWishlist(slug) {
         fetch(`/add-to-wish/${slug}/`, {

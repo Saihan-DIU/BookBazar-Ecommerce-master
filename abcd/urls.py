@@ -1,4 +1,3 @@
-# abcd/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -8,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),  # MOVE THIS BEFORE empty path
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', include('eco.urls')),  # MOVE THIS TO LAST - catches everything else
+    path('', include('eco.urls', namespace='eco')),  # ADD namespace='eco' HERE
 ]
 
 if settings.DEBUG:

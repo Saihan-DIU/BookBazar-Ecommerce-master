@@ -44,7 +44,7 @@ urlpatterns = [
     path('remove-from-wish/<slug:slug>/', views.remove_from_wish, name='remove-from-wish'),
     
     # ==================== COUPONS ====================
-    path('add-coupon/', views.AddCouponView.as_view(), name='add-coupon'),
+    path('apply-promo-code/', views.apply_promo_code, name='apply-promo-code'),
     
     # ==================== STATIC PAGES ====================
     path('faq/', views.Faq.as_view(), name='faq'),

@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, TemplateView, View, FormView,
 )
+from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -259,6 +260,8 @@ def remove_single_item_from_cart(request, slug):
         messages.info(request, "Item not found in cart")
     
     return redirect("eco:cart")
+
+
 
 # ==================== SEARCH & PRODUCT VIEWS ====================
 
@@ -650,6 +653,7 @@ def remove_from_wish(request, slug):
 
 # ==================== COUPONS ====================
 
+
 @login_required
 def get_coupon(request, code):
     try:
@@ -674,6 +678,78 @@ class AddCouponView(LoginRequiredMixin,View):
             except ObjectDoesNotExist:
                 messages.info(self.request, "You do not have an active order")
                 return redirect("eco:cart")
+
+# MOVE THIS FUNCTION OUTSIDE THE CLASS - FIX THE INDENTATION
+@require_POST
+def apply_promo_code(request):
+    try:
+        data = json.loads(request.body)
+        promo_code = data.get('promo_code', '').strip().upper()
+        
+        if not request.user.is_authenticated:
+            return JsonResponse({
+                'success': False,
+                'message': 'Please log in to apply promo codes.'
+            })
+        
+        try:
+            cart = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'No cart found. Please add items to your cart first.'
+            })
+        
+        try:
+            coupon = Coupon.objects.get(code=promo_code, active=True)
+            
+            # Check if coupon is valid (within date range)
+            now = timezone.now()
+            if not (coupon.valid_from <= now <= coupon.valid_to):
+                return JsonResponse({
+                    'success': False,
+                    'message': 'This promo code has expired.'
+                })
+            
+            # Store the applied coupon in session
+            request.session['applied_coupon'] = {
+                'code': coupon.code,
+                'amount': float(coupon.amount),
+                'id': coupon.id
+            }
+            
+            # Calculate the discount using the cart's current totals
+            discount_amount = float(coupon.amount)
+            
+            # Use the cart's own calculation methods
+            # The cart's final_total already excludes tax
+            new_final_total = max(0, cart.final_total - discount_amount)
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Promo code applied! ${discount_amount:.2f} discount added.',
+                'discount_amount': discount_amount,
+                'cart_data': {
+                    'subtotal': float(cart.subtotal),
+                    'final_total': float(new_final_total),
+                    'total_items': cart.total_items,
+                    'total_discount': float(cart.total_discount) + discount_amount,
+                    'grand_total': float(new_final_total)  # No tax added
+                }
+            })
+            
+        except Coupon.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid or expired promo code.'
+            })
+            
+    except Exception as e:
+        print(f"Error applying promo code: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': 'An error occurred while applying the promo code.'
+        })
 
 # ==================== CONTACT & ACCOUNT ====================
 
