@@ -12,7 +12,7 @@
             --secondary: #10b981;
             --accent: #8b5cf6;
             --dark: #1f2937;
-            --light: #ffffff;
+            --light: #ffffffff;
             --gray-light: #f8fafc;
             --gray: #6b7280;
             --border: #e5e7eb;
@@ -22,6 +22,8 @@
             --nav-bg: rgba(255, 255, 255, 0.95);
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--accent));
         }
 
         [data-theme="dark"] {
@@ -76,10 +78,6 @@
 
         .message-alert {
             transition: all 0.3s ease;
-        }
-
-        .message-alert.fade-out {
-            animation: fadeOut 0.3s ease forwards;
         }
 
         .message-close-btn:hover {
@@ -274,80 +272,162 @@
 
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
             padding: 2rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
+        /* Enhanced Category Cards */
         .category-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 0;
+            border-radius: 20px;
+            overflow: hidden;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             position: relative;
-            overflow: hidden;
             box-shadow: var(--shadow);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+            z-index: 2;
         }
 
         .category-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             border-color: var(--primary);
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-image-container {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
         }
 
         .category-image {
             width: 100%;
-            height: 200px;
-            border-radius: 12px 12px 0 0;
-            overflow: hidden;
-            margin-bottom: 0;
-            position: relative;
-        }
-
-        .category-image img {
-            width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: all 0.5s ease;
         }
 
-        .category-card:hover .category-image img {
+        .category-card:hover .category-image {
             transform: scale(1.1);
         }
 
-        .category-card .category-icon {
+        .category-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 1.5rem;
+        }
+
+        .category-card:hover .category-overlay {
+            opacity: 1;
+        }
+
+        .explore-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover .explore-btn {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .category-badge {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: rgba(255, 255, 255, 0.9);
+            background: var(--gradient-primary);
+            color: white;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
             z-index: 2;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
 
-        [data-theme="dark"] .category-card .category-icon {
-            background: rgba(30, 41, 59, 0.9);
+        .category-card:hover .category-badge {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .category-content {
-            padding: 1.5rem;
+            padding: 1.8rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .category-title {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 700;
             margin-bottom: 1rem;
             color: var(--text-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .category-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .category-card:hover .category-title::after {
+            width: 100%;
         }
 
         .category-description {
@@ -355,23 +435,77 @@
             line-height: 1.6;
             margin-bottom: 1.5rem;
             font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        .category-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
         }
 
         .category-count {
-            background: var(--primary);
+            background: var(--gradient-primary);
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
             font-size: 0.9rem;
-            font-weight: 500;
-            display: inline-block;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover .category-count {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .category-stats {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .category-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        /* Featured Category Highlight */
+        .category-card.featured {
+            border: 2px solid var(--primary);
+            position: relative;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 3;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
         }
 
         /* Category Actions */
         .category-actions {
             display: flex;
             justify-content: center;
-            margin-top: 2rem;
+            margin-top: 3rem;
             width: 100%;
         }
 
@@ -619,10 +753,16 @@
             .categories-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+                padding: 1rem;
             }
             
             .category-card {
-                padding: 0;
+                margin: 0 auto;
+                max-width: 400px;
+            }
+            
+            .category-image-container {
+                height: 200px;
             }
 
             .book-actions {
@@ -641,10 +781,23 @@
                 max-width: none;
             }
         }
+
+        @media (max-width: 480px) {
+            .category-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .category-stats {
+                align-self: flex-end;
+            }
+        }
+
         .main-content {
-    min-height: calc(100vh - 200px); /* Ensure content pushes footer down */
-    padding-bottom: 2rem;
-}
+            min-height: calc(100vh - 200px);
+            padding-bottom: 2rem;
+        }
     </style>
 </head>
 
@@ -744,69 +897,56 @@
             <div class="categories-grid">
                 <!-- Dynamic Categories - Show first 3 categories -->
                 {% for category in categories|slice:":3" %}
-                <div class="category-card" onclick="location.href='{% url 'eco:category-detail' category.slug %}'">
-                    <div class="category-image">
+                <div class="category-card {% if forloop.first %}featured{% endif %}" 
+                     onclick="location.href='{% url 'eco:category-detail' category.slug %}'">
+                    
+                    {% if forloop.first %}
+                    <div class="featured-badge">Featured</div>
+                    {% endif %}
+                    
+                    <div class="category-image-container">
                         {% if category.image %}
-                            <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
                         {% else %}
-                            <!-- Default images based on category name -->
-                            {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
-                                <img src="https://i.pinimg.com/originals/b0/52/6d/b0526d8ca7d5b6202bc0b22481258421.jpg" alt="{{ category.name }}">
-                            {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
-                                <img src="https://cdn.pixabay.com/photo/2018/05/08/08/44/artificial-intelligence-3382507_640.jpg" alt="{{ category.name }}">
-                            {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
-                                <img src="https://cdn.pixabay.com/photo/2018/08/15/13/10/galaxy-3608029_640.jpg" alt="{{ category.name }}">
-                            {% elif "business" in category.name|lower or "finance" in category.name|lower %}
-                                <img src="https://images.unsplash.com/photo-1664575599618-8f6bd76fc670?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
-                            {% elif "thriller" in category.name|lower %}
-                                <img src="https://images-na.ssl-images-amazon.com/images/I/71pgI2ou5oL.jpg" alt="{{ category.name }}">
-                            {% elif "art" in category.name|lower or "design" in category.name|lower %}
-                                <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
-                            {% elif "education" in category.name|lower %}
-                                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
-                            {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
-                                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="{{ category.name }}">
-                            {% else %}
-                                <img src="https://via.placeholder.com/400x300/cccccc/666666?text=Book+Category" alt="{{ category.name }}">
-                            {% endif %}
+                            <!-- Fallback placeholder image -->
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                                 alt="{{ category.name }}" class="category-image">
                         {% endif %}
-                        <span class="category-icon">
-                            {% if "fiction" in category.name|lower or "literature" in category.name|lower %}📖
-                            {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}🔬
-                            {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}🚀
-                            {% elif "business" in category.name|lower or "finance" in category.name|lower %}🎯
-                            {% elif "thriller" in category.name|lower %}🧠
-                            {% elif "art" in category.name|lower or "design" in category.name|lower %}🎨
-                            {% elif "education" in category.name|lower %}📊
-                            {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}🍳
-                            {% else %}📚{% endif %}
-                        </span>
-                    </div>
-                    <div class="category-content">
-                        <h3 class="category-title">{{ category.name }}</h3>
-                        <p class="category-description">
-                            {% if "fiction" in category.name|lower or "literature" in category.name|lower %}
-                                Explore captivating stories, novels, and literary masterpieces from around the world.
-                            {% elif "science" in category.name|lower and "fiction" not in category.name|lower %}
-                                Latest discoveries, programming guides, AI, and cutting-edge technology books.
-                            {% elif "sci-fi" in category.name|lower or "science fiction" in category.name|lower %}
-                                Futuristic worlds, space adventures, and mind-bending speculative fiction.
-                            {% elif "business" in category.name|lower or "finance" in category.name|lower %}
-                                Entrepreneurship, investing, management, and financial success strategies.
-                            {% elif "thriller" in category.name|lower %}
-                                Suspenseful stories, mysteries, and heart-pounding thrillers that keep you on edge.
-                            {% elif "art" in category.name|lower or "design" in category.name|lower %}
-                                Creative arts, graphic design, photography, and visual storytelling.
-                            {% elif "education" in category.name|lower %}
-                                Academic resources, teaching methods, and educational development.
-                            {% elif "cooking" in category.name|lower or "lifestyle" in category.name|lower %}
-                                Culinary arts, healthy living, home, and lifestyle improvement books.
+                        
+                        <div class="category-overlay">
+                            <button class="explore-btn">Explore Now</button>
+                        </div>
+                        
+                        <div class="category-badge">
+                            {% if category.icon %}
+                                {{ category.icon }}
                             {% else %}
-                                Discover amazing books in {{ category.name }} category.
+                                📚
                             {% endif %}
-                        </p>
-                        <!-- Dynamic book count - REAL VALUE FROM DATABASE -->
-                        <span class="category-count">{{ category.total_books }}+ Books</span>
+                        </div>
+                    </div>
+                    
+                    <div class="category-content">
+                        <div>
+                            <h3 class="category-title">{{ category.name }}</h3>
+                            <p class="category-description">
+                                {% if category.description %}
+                                    {{ category.description|truncatewords:20 }}
+                                {% else %}
+                                    Discover amazing books in {{ category.name }} category. Explore our curated collection of the best titles.
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="category-footer">
+                            <span class="category-count">{{ category.total_books }}+ Books</span>
+                            <div class="category-stats">
+                                <div class="category-rating">
+                                    <span class="star">⭐</span>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% empty %}
@@ -982,6 +1122,24 @@
                     }
                 }, 300);
             }
+            
+            // Enhanced category card animations
+            const categoryCards = document.querySelectorAll('.category-card');
+            
+            // Add staggered animation on page load
+            categoryCards.forEach((card, index) => {
+                card.style.animation = `fadeInUp 0.6s ease ${index * 0.1}s both`;
+            });
+            
+            // Add click effect
+            categoryCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
             
             // Remove all messages when navigating away (optional)
             window.addEventListener('beforeunload', function() {
