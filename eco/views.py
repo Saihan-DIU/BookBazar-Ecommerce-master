@@ -317,7 +317,7 @@ class EcoIndex(ListView):
 
 class EcoDetail(DetailView):
     model = Book
-    template_name = 'eco/detail.html'   
+    template_name ='eco/book_detail.html'  
     context_object_name = 'item'
 
     def get_context_data(self, **kwargs):

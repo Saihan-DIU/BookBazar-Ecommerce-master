@@ -1,0 +1,896 @@
+{% extends 'eco/base_common.html' %}
+{% load static %}
+
+{% block title %}{{ item.title }} by {{ item.author }} - BookBazar{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="{{ item.description|truncatewords:30 }}">
+<meta property="og:title" content="{{ item.title }}">
+<meta property="og:description" content="{{ item.description|truncatewords:30 }}">
+<meta property="og:image" content="{{ item.cover_image.url }}">
+<meta property="og:type" content="book">
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Clean, Professional Book Detail Styles */
+    .book-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+        color: var(--accent);
+    }
+
+    /* Main Content Layout */
+    .book-main {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 3rem;
+        margin-bottom: 4rem;
+    }
+
+    /* Book Cover - Clean and Simple */
+    .book-cover-container {
+        text-align: center;
+    }
+
+    .book-cover {
+        max-width: 100%;
+        height: 400px;
+        object-fit: contain;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+
+    .book-actions-mobile {
+        display: none;
+    }
+
+    /* Book Info */
+    .book-info {
+        padding-right: 2rem;
+    }
+
+    .book-title {
+        font-size: 1.8rem;
+        font-weight: 400;
+        line-height: 1.3;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .book-author {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .book-author a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .book-author a:hover {
+        text-decoration: underline;
+        color: var(--accent);
+    }
+
+    /* Rating */
+    .rating-section {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .stars {
+        color: #ffa41c;
+        font-size: 1.1rem;
+    }
+
+    .rating-text {
+        color: var(--primary);
+        font-size: 0.9rem;
+    }
+
+    .rating-text:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    /* Price Section */
+    .price-section {
+        margin: 1.5rem 0;
+    }
+
+    .price {
+        font-size: 1.5rem;
+        color: #b12704;
+        font-weight: 400;
+    }
+
+    .shipping-note {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
+
+    /* Stock Status */
+    .stock-status {
+        color: #007600;
+        font-size: 1rem;
+        margin: 1rem 0;
+    }
+
+    .stock-status.out-of-stock {
+        color: #b12704;
+    }
+
+    /* Description */
+    .book-description {
+        margin: 2rem 0;
+        line-height: 1.6;
+        color: var(--text-color);
+    }
+
+    .book-description h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    /* Product Details - FIXED FOR DARK MODE */
+    .product-details {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        padding: 1.5rem;
+        border-radius: 4px;
+        margin: 2rem 0;
+    }
+
+    .product-details h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    .detail-item {
+        display: flex;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        min-width: 120px;
+        color: var(--gray);
+    }
+
+    .detail-value {
+        color: var(--text-color);
+    }
+
+    /* Add to Cart Section - FIXED FOR DARK MODE */
+    .purchase-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .quantity-selector {
+        margin-bottom: 1rem;
+    }
+
+    .quantity-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .quantity-controls {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .quantity-btn {
+        background: var(--gray-light);
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-size: 1rem;
+        color: var(--text-color);
+    }
+
+    .quantity-btn:hover {
+        background: var(--primary-light);
+        color: white;
+    }
+
+    #quantity {
+        width: 60px;
+        text-align: center;
+        border: none;
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        padding: 0.5rem;
+        font-size: 1rem;
+        background: var(--card-bg);
+        color: var(--text-color);
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .btn-add-to-cart {
+        background: #ffd814;
+        border: 1px solid #fcd200;
+        border-radius: 20px;
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s;
+        font-weight: 600;
+        color: #111;
+    }
+
+    .btn-add-to-cart:hover {
+        background: #f7ca00;
+        border-color: #f2c200;
+    }
+
+    .btn-add-to-cart:disabled {
+        background: var(--gray);
+        border-color: var(--border);
+        cursor: not-allowed;
+        color: var(--text-color);
+    }
+
+    .btn-wishlist {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-align: center;
+        color: var(--text-color);
+        transition: all 0.2s;
+    }
+
+    .btn-wishlist:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* Delivery Info */
+    .delivery-info {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .delivery-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--gray);
+    }
+
+    .delivery-icon {
+        color: #007600;
+        min-width: 16px;
+    }
+
+    /* Related Books */
+    .related-section {
+        border-top: 1px solid var(--border);
+        padding-top: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 400;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+    }
+
+    .related-books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .related-book-card {
+        text-align: center;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+        transition: all 0.2s;
+    }
+
+    .related-book-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .related-book-image {
+        width: 120px;
+        height: 160px;
+        object-fit: cover;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 4px;
+    }
+
+    .related-book-title {
+        font-size: 0.9rem;
+        font-weight: 400;
+        margin-bottom: 0.25rem;
+        color: var(--primary);
+        text-decoration: none;
+        display: block;
+    }
+
+    .related-book-title:hover {
+        text-decoration: underline;
+        color: var(--accent);
+    }
+
+    .related-book-author {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-bottom: 0.25rem;
+    }
+
+    .related-book-price {
+        font-size: 0.9rem;
+        color: #b12704;
+        font-weight: 600;
+    }
+
+    /* Modal - FIXED FOR DARK MODE */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: var(--card-bg);
+        margin: 15% auto;
+        padding: 2rem;
+        border-radius: 4px;
+        width: 90%;
+        max-width: 400px;
+        position: relative;
+        text-align: center;
+        border: 1px solid var(--border);
+    }
+
+    .close-modal {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-color);
+    }
+
+    .success-icon {
+        color: #007600;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-continue-shopping {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        flex: 1;
+        color: var(--text-color);
+    }
+
+    .btn-continue-shopping:hover {
+        background: var(--gray-light);
+    }
+
+    .btn-view-cart {
+        background: #ffd814;
+        border: 1px solid #fcd200;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #111;
+        text-align: center;
+        flex: 1;
+    }
+
+    .btn-view-cart:hover {
+        background: #f7ca00;
+    }
+
+    /* Loading */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading-spinner {
+        color: var(--primary);
+        font-size: 2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .book-main {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .book-info {
+            padding-right: 0;
+        }
+
+        .book-actions-mobile {
+            display: block;
+            position: sticky;
+            bottom: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+            margin: 2rem -1rem -2rem;
+        }
+
+        .purchase-box {
+            margin-top: 0;
+            border: none;
+            padding: 0;
+        }
+
+        .action-buttons {
+            flex-direction: row;
+        }
+
+        .btn-add-to-cart,
+        .btn-wishlist {
+            flex: 1;
+            font-size: 0.8rem;
+            padding: 0.8rem 0.5rem;
+        }
+
+        .related-books-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="book-detail-container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="/">Home</a> > 
+        <a href="/books/">Books</a> > 
+        <a href="/books/{{ item.category.slug }}/">{{ item.category.name }}</a> > 
+        <span>{{ item.title|truncatewords:4 }}</span>
+    </nav>
+
+    <div class="book-main">
+        <!-- Book Cover -->
+        <div class="book-cover-container">
+            <img src="{{ item.cover_image.url }}" alt="{{ item.title }}" class="book-cover">
+            
+            <!-- Mobile Actions (hidden on desktop) -->
+            <div class="book-actions-mobile">
+                <div class="purchase-box">
+                    <div class="price-section">
+                        <div class="price">${{ item.price }}</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-add-to-cart" id="addToCartBtnMobile" 
+                                {% if not item.is_available or item.stock_quantity == 0 %}disabled{% endif %}>
+                            Add to Cart
+                        </button>
+                        <button class="btn-wishlist" id="wishlistBtnMobile">
+                            Add to Wish List
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Book Information -->
+        <div class="book-info">
+            <h1 class="book-title">{{ item.title }}</h1>
+            <div class="book-author">
+                by <a href="#">{{ item.author }}</a>
+            </div>
+
+            <!-- Rating -->
+            <div class="rating-section">
+                <div class="stars">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= item.average_rating %}
+                        <i class="fas fa-star"></i>
+                        {% else %}
+                        <i class="far fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <span class="rating-text">{{ item.review_count }} ratings</span>
+            </div>
+
+            <!-- Price -->
+            <div class="price-section">
+                <div class="price">${{ item.price }}</div>
+                <div class="shipping-note">+ $3.99 shipping</div>
+            </div>
+
+            <!-- Stock Status -->
+            <div class="stock-status {% if item.is_available and item.stock_quantity > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+                {% if item.is_available and item.stock_quantity > 0 %}
+                    <i class="fas fa-check"></i> In Stock ({{ item.stock_quantity }} available)
+                {% else %}
+                    <i class="fas fa-times"></i> Out of Stock
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="book-description">
+                <h3>About this book</h3>
+                <p>{{ item.description }}</p>
+            </div>
+
+            <!-- Product Details -->
+            <div class="product-details">
+                <h3>Product details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Publisher:</span>
+                    <span class="detail-value">{{ item.publisher|default:"Not specified" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Publication date:</span>
+                    <span class="detail-value">{{ item.publication_date|date:"F j, Y"|default:"Not specified" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Language:</span>
+                    <span class="detail-value">{{ item.language|default:"English" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">ISBN-10:</span>
+                    <span class="detail-value">{{ item.isbn|default:"Not specified" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Pages:</span>
+                    <span class="detail-value">{{ item.pages|default:"Not specified" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Format:</span>
+                    <span class="detail-value">{{ item.get_format_type_display|default:"Paperback" }}</span>
+                </div>
+            </div>
+
+            <!-- Desktop Purchase Box -->
+            <div class="purchase-box">
+                <div class="quantity-selector">
+                    <label class="quantity-label">Qty:</label>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" id="decreaseQty">-</button>
+                        <input type="number" id="quantity" value="1" min="1" max="{{ item.stock_quantity }}">
+                        <button class="quantity-btn" id="increaseQty">+</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-add-to-cart" id="addToCartBtn" 
+                            {% if not item.is_available or item.stock_quantity == 0 %}disabled{% endif %}>
+                        Add to Cart
+                    </button>
+                    <button class="btn-wishlist" id="wishlistBtn">
+                        Add to Wish List
+                    </button>
+                </div>
+
+                <div class="delivery-info">
+                    <div class="delivery-item">
+                        <i class="fas fa-shipping-fast delivery-icon"></i>
+                        <span>FREE delivery <strong>Tomorrow</strong></span>
+                    </div>
+                    <div class="delivery-item">
+                        <i class="fas fa-map-marker-alt delivery-icon"></i>
+                        <span>Deliver to your location</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Books -->
+    {% if related_books %}
+    <section class="related-section">
+        <h2 class="section-title">Customers who viewed this item also viewed</h2>
+        <div class="related-books-grid">
+            {% for related_book in related_books %}
+            <div class="related-book-card">
+                <a href="{{ related_book.get_absolute_url }}">
+                    <img src="{{ related_book.cover_image.url }}" alt="{{ related_book.title }}" class="related-book-image">
+                    <span class="related-book-title">{{ related_book.title|truncatewords:4 }}</span>
+                </a>
+                <div class="related-book-author">by {{ related_book.author }}</div>
+                <div class="related-book-price">${{ related_book.price }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<!-- Success Modal -->
+<div class="modal" id="successModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Added to Cart</h3>
+        <p>"{{ item.title }}" was added to your shopping cart.</p>
+        <div class="modal-actions">
+            <button class="btn-continue-shopping">Continue Shopping</button>
+            <a href="/cart/" class="btn-view-cart">View Cart</a>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+</div>
+{% include 'eco/footer.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decreaseQty');
+        const increaseBtn = document.getElementById('increaseQty');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+        const addToCartBtnMobile = document.getElementById('addToCartBtnMobile');
+        const wishlistBtn = document.getElementById('wishlistBtn');
+        const wishlistBtnMobile = document.getElementById('wishlistBtnMobile');
+        const successModal = document.getElementById('successModal');
+        const closeModal = document.querySelector('.close-modal');
+        const continueShoppingBtn = document.querySelector('.btn-continue-shopping');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        console.log('Book Detail Page Loaded - Add to Cart functionality ready');
+
+        // Quantity controls
+        function adjustQuantity(change) {
+            let currentValue = parseInt(quantityInput.value);
+            const maxStock = parseInt(quantityInput.max) || 10;
+            const newValue = currentValue + change;
+            if (newValue >= 1 && newValue <= maxStock) {
+                quantityInput.value = newValue;
+            }
+        }
+
+        decreaseBtn.addEventListener('click', () => adjustQuantity(-1));
+        increaseBtn.addEventListener('click', () => adjustQuantity(1));
+
+        // Stock validation function
+        function checkStockStatus() {
+            const isInStock = {% if item.is_available and item.stock_quantity > 0 %}true{% else %}false{% endif %};
+            
+            if (!isInStock) {
+                alert('Sorry, this item is currently out of stock.');
+                return false;
+            }
+            return true;
+        }
+
+        // Add to Cart functionality
+        async function addToCart() {
+            console.log('Add to Cart button clicked');
+            
+            // Check stock status
+            if (!checkStockStatus()) {
+                return;
+            }
+            
+            const quantity = parseInt(quantityInput.value);
+            console.log('Quantity selected:', quantity);
+            
+            // Check if user is logged in
+            {% if not user.is_authenticated %}
+                alert('Please log in to add items to cart');
+                window.location.href = '/login/';
+                return;
+            {% endif %}
+
+            // Show loading
+            loadingOverlay.style.display = 'flex';
+
+            try {
+                const url = `/cart/add/{{ item.slug }}/`;
+                console.log('Making AJAX request to:', url);
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        quantity: quantity
+                    })
+                });
+
+                console.log('Response status:', response.status);
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data.success) {
+                    console.log('Success! Book added to cart');
+                    successModal.style.display = 'block';
+                    updateCartCount(data.total_items);
+                    
+                    // Show success toast if available
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || 'Book added to cart!', 'success');
+                    }
+                } else {
+                    console.error('API returned error:', data.message);
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                alert('An error occurred while adding to cart. Please try again.');
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // Add event listeners for both desktop and mobile buttons
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', addToCart);
+            console.log('Desktop Add to Cart button listener added');
+        }
+        
+        if (addToCartBtnMobile) {
+            addToCartBtnMobile.addEventListener('click', addToCart);
+            console.log('Mobile Add to Cart button listener added');
+        }
+
+        // Wishlist functionality
+        function toggleWishlist() {
+            alert('Added to wishlist!');
+            console.log('Wishlist button clicked');
+        }
+
+        if (wishlistBtn) {
+            wishlistBtn.addEventListener('click', toggleWishlist);
+        }
+        
+        if (wishlistBtnMobile) {
+            wishlistBtnMobile.addEventListener('click', toggleWishlist);
+        }
+
+        // Utility functions
+        function getCSRFToken() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (csrfToken) {
+                return csrfToken.getAttribute('content');
+            } else {
+                // Fallback to cookie
+                const cookieValue = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('csrftoken='))
+                    ?.split('=')[1];
+                return cookieValue || '';
+            }
+        }
+
+        function updateCartCount(count) {
+            console.log('Updating cart count to:', count);
+            const cartCountElements = document.querySelectorAll('.cart-count');
+            cartCountElements.forEach(element => {
+                element.textContent = count;
+                // Add visual feedback
+                element.style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 300);
+            });
+        }
+
+        // Modal controls
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                successModal.style.display = 'none';
+            });
+        }
+
+        if (continueShoppingBtn) {
+            continueShoppingBtn.addEventListener('click', function() {
+                successModal.style.display = 'none';
+            });
+        }
+
+        window.addEventListener('click', function(event) {
+            if (event.target === successModal) {
+                successModal.style.display = 'none';
+            }
+        });
+
+        // Debug info
+        console.log('Current book:', '{{ item.title }}');
+        console.log('Book slug:', '{{ item.slug }}');
+        console.log('Expected API URL:', `/cart/add/{{ item.slug }}/`);
+        console.log('User authenticated:', {% if user.is_authenticated %}true{% else %}false{% endif %});
+        console.log('Book available:', {% if item.is_available %}true{% else %}false{% endif %});
+        console.log('Stock quantity:', {{ item.stock_quantity }});
+    });
+</script>
+{% endblock %}
