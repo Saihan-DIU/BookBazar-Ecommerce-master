@@ -158,16 +158,61 @@ class ContactForm(forms.Form):
         return message.strip()
 
 class AddressForm(forms.ModelForm):
+    # ADD THESE NEW FIELDS
+    first_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'First Name'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'placeholder': 'Last Name'
+        })
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Email Address'
+        })
+    )
+    phone_number = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Phone Number'
+        })
+    )
+    alternate_email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Alternate Email (Optional)'
+        })
+    )
+    is_business_address = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input'
+        })
+    )
+    city = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'City'
+        })
+    )
+
     class Meta:
         model = Address
-        fields = (
-            'street_address', 
-            'apartment_address', 
-            'country', 
-            'zip_code',
-            'address_type', 
-            'default'
-        )
+        fields = [
+            'first_name', 'last_name', 'street_address', 'apartment_address',
+            'city', 'zip_code', 'country', 'email', 'phone_number', 
+            'alternate_email', 'is_business_address', 'address_type', 'default'
+        ]
         widgets = {
             'street_address': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -178,30 +223,25 @@ class AddressForm(forms.ModelForm):
                 'placeholder': 'Apartment or suite'
             }),
             'country': CountrySelectWidget(attrs={
-                'class': 'custom-select d-block w-100'
+                'class': 'form-control'
             }),
             'zip_code': forms.TextInput(attrs={
-                'class': 'form-control',
+                'class': 'form-control', 
                 'placeholder': 'Zip code'
             }),
             'address_type': forms.Select(attrs={
-                'class': 'custom-select d-block w-100'
+                'class': 'form-control'
             }),
         }
 
-    def clean_zip_code(self):
-        zip_code = self.cleaned_data.get('zip_code')
-        if zip_code and len(zip_code) < 3:
-            raise forms.ValidationError("Zip code must be at least 3 characters long.")
-        return zip_code
-
-    def clean_street_address(self):
-        street_address = self.cleaned_data.get('street_address')
-        if not street_address:
-            raise forms.ValidationError("Street address is required.")
-        if len(street_address.strip()) < 5:
-            raise forms.ValidationError("Street address must be at least 5 characters long.")
-        return street_address.strip()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make fields required
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.fields['email'].required = True
+        self.fields['phone_number'].required = True
+        self.fields['city'].required = True
 
 
 class UserProfileForm(forms.ModelForm):

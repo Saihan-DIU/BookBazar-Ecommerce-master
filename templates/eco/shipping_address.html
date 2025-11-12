@@ -1,0 +1,733 @@
+{% extends 'eco/base_common.html' %}
+{% load static %}
+
+{% block title %}Shipping Address - BookBazar{% endblock %}
+
+{% block extra_css %}
+<style>
+    .shipping-address-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        min-height: 80vh;
+    }
+
+    .shipping-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .shipping-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .shipping-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+    }
+
+    .shipping-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .form-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .addresses-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-color);
+        color: var(--text-color);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .checkbox-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+    }
+
+    .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 2rem 0;
+    }
+
+    .help-text {
+        color: var(--gray);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        line-height: 1.4;
+    }
+
+    .warning-text {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        font-weight: 500;
+    }
+
+    .btn-save-address {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .btn-save-address:hover {
+        background: var(--primary-light);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .address-options {
+        background: rgba(16, 185, 129, 0.05);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .address-options-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    .security-notice {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 0.875rem;
+        color: var(--gray);
+    }
+
+    .optional-badge {
+        color: var(--gray);
+        font-size: 0.8rem;
+        font-weight: normal;
+    }
+
+    .address-card {
+        background: var(--gray-light);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .address-card.default {
+        border-color: var(--secondary);
+        background: rgba(16, 185, 129, 0.05);
+    }
+
+    .default-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--secondary);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .address-details {
+        line-height: 1.6;
+        color: var(--text-color);
+    }
+
+    .address-details strong {
+        color: var(--text-color);
+        font-size: 1.1rem;
+    }
+
+    .address-actions {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-edit, .btn-delete, .btn-set-default {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: var(--primary-light);
+    }
+
+    .btn-delete {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background: #dc2626;
+    }
+
+    .btn-set-default {
+        background: var(--secondary);
+        color: white;
+    }
+
+    .btn-set-default:hover {
+        background: #059669;
+    }
+
+    .no-addresses {
+        text-align: center;
+        padding: 2rem;
+        color: var(--gray);
+    }
+
+    .no-addresses i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    /* Messages styling */
+    .alert-messages {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 400px;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .alert-success {
+        color: #0f5132;
+        background-color: #d1e7dd;
+        border-color: #badbcc;
+    }
+
+    .alert-error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .alert-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeaa7;
+    }
+
+    .alert-info {
+        color: #055160;
+        background-color: #cff4fc;
+        border-color: #b6effb;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .shipping-address-container {
+            padding: 1rem;
+        }
+        
+        .shipping-title {
+            font-size: 1.75rem;
+        }
+        
+        .shipping-content {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .form-section, .addresses-section {
+            padding: 1.5rem;
+        }
+        
+        .address-actions {
+            flex-direction: column;
+        }
+
+        .alert-messages {
+            top: 80px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Messages Display -->
+<div class="alert-messages">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                <strong>
+                    {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle"></i> Success!
+                    {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle"></i> Error!
+                    {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle"></i> Warning!
+                    {% else %}
+                        <i class="fas fa-info-circle"></i> Info
+                    {% endif %}
+                </strong>
+                {{ message }}
+                <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'" style="background: none; border: none; font-size: 1.2rem; margin-left: 1rem; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="shipping-address-container">
+    <!-- Header -->
+    <div class="shipping-header">
+        <h1 class="shipping-title">Manage Shipping Address</h1>
+        <p class="shipping-subtitle">Add or update your delivery addresses</p>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="shipping-content">
+        <!-- Left column: Form -->
+        <div>
+            <!-- Shipping Address Form -->
+            <form method="POST" id="shippingForm">
+                {% csrf_token %}
+                
+                <!-- Debug messages for form errors -->
+                {% if form.errors %}
+                <div class="alert alert-error" style="margin-bottom: 2rem;">
+                    <strong><i class="fas fa-exclamation-circle"></i> Please correct the errors below:</strong>
+                    <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem;">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <!-- Address Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Enter your name and address:</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.first_name.id_for_label }}">
+                                First Name
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                    {{ form.first_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.last_name.id_for_label }}">
+                                Last Name
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                    {{ form.last_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.street_address.id_for_label }}">
+                            Street Address
+                        </label>
+                        {{ form.street_address }}
+                        {% if form.street_address.errors %}
+                            <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                {{ form.street_address.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.apartment_address.id_for_label }}">
+                            Apt, Suite, Building <span class="optional-badge">(Optional)</span>
+                        </label>
+                        {{ form.apartment_address }}
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.zip_code.id_for_label }}">
+                                Zip Code
+                            </label>
+                            {{ form.zip_code }}
+                            {% if form.zip_code.errors %}
+                                <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                    {{ form.zip_code.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.city.id_for_label }}">
+                                City
+                            </label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                                <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                    {{ form.city.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.country.id_for_label }}">
+                            Country/Region
+                        </label>
+                        {{ form.country }}
+                        {% if form.country.errors %}
+                            <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                {{ form.country.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="checkbox-group">
+                        {{ form.is_business_address }}
+                        <label class="checkbox-label" for="{{ form.is_business_address.id_for_label }}">
+                            This is a business address
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Contact Information</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.email.id_for_label }}">
+                            Email Address
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                {{ form.email.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="help-text">
+                            We'll email you order confirmations and updates.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.phone_number.id_for_label }}">
+                            Phone Number
+                        </label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                {{ form.phone_number.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="help-text">
+                            For delivery updates and notifications.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.alternate_email.id_for_label }}">
+                            Share updates with someone else:
+                        </label>
+                        {{ form.alternate_email }}
+                        <div class="help-text">
+                            Enter an alternate email address (optional)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Options -->
+                <div class="address-options">
+                    <h4 class="address-options-title">Address Options</h4>
+                    
+                    <div class="checkbox-group">
+                        {{ form.default }}
+                        <label class="checkbox-label" for="{{ form.default.id_for_label }}">
+                            Set as default shipping address
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.address_type.id_for_label }}">
+                            Address Type
+                        </label>
+                        {{ form.address_type }}
+                        {% if form.address_type.errors %}
+                            <div class="error-message" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">
+                                {{ form.address_type.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <button type="submit" class="btn-save-address">
+                    <i class="fas fa-save"></i> Save Shipping Address
+                </button>
+
+                <!-- Security Notice -->
+                <div class="security-notice">
+                    <i class="fas fa-lock"></i> Your information is secure. We use industry-standard encryption to protect your data.
+                </div>
+            </form>
+        </div>
+
+        <!-- Right column: Saved addresses -->
+        <div class="addresses-section">
+            <h3 class="section-title">Your Shipping Addresses</h3>
+            
+            {% if shipping_addresses %}
+                {% for address in shipping_addresses %}
+                <div class="address-card {% if address.default %}default{% endif %}" data-address-id="{{ address.id }}">
+                    {% if address.default %}
+                        <span class="default-badge">Default</span>
+                    {% endif %}
+                    
+                    <div class="address-details">
+                        <p><strong>{{ address.street_address }}</strong></p>
+                        {% if address.apartment_address %}
+                            <p>{{ address.apartment_address }}</p>
+                        {% endif %}
+                        <p>{{ address.city }}, {{ address.zip_code }}</p>
+                        <p>{{ address.country.name }}</p>
+                        <p>Type: {{ address.get_address_type_display }}</p>
+                        
+                        <div class="address-actions">
+                            <button class="btn-edit" onclick="editAddress({{ address.id }})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            {% if not address.default %}
+                            <button class="btn-set-default" onclick="setDefaultAddress({{ address.id }})">
+                                <i class="fas fa-star"></i> Set Default
+                            </button>
+                            <button class="btn-delete" onclick="deleteAddress({{ address.id }})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-addresses">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>No shipping addresses saved yet.</p>
+                    <p>Add your first address using the form.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% include 'eco/footer.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Functions for address actions - WITHOUT CONFIRMATION DIALOGS
+    function editAddress(addressId) {
+        // Redirect to edit address page
+        window.location.href = "{% url 'eco:edit-address' 0 %}".replace('0', addressId);
+    }
+    
+    function setDefaultAddress(addressId) {
+        // Create a form and submit it immediately (no confirmation)
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'eco:set-default-address' 0 %}".replace('0', addressId);
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+    
+    function deleteAddress(addressId) {
+        // Create a form and submit it immediately (no confirmation)
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'eco:delete-address' 0 %}".replace('0', addressId);
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // Auto-hide messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'all 0.3s ease';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            }, 5000);
+        });
+
+        // Add real-time validation for phone number and email (visual only)
+        const phoneInput = document.getElementById('{{ form.phone_number.id_for_label }}');
+        const emailInput = document.getElementById('{{ form.email.id_for_label }}');
+        
+        function validatePhoneNumber(input) {
+            // More flexible phone number validation
+            const phoneRegex = /^[\+]?[1-9][\d\s\-\(\)]{8,}$/;
+            if (input.value && !phoneRegex.test(input.value)) {
+                input.style.borderColor = '#dc2626';
+            } else {
+                input.style.borderColor = '#10b981';
+            }
+        }
+        
+        function validateEmail(input) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (input.value && !emailRegex.test(input.value)) {
+                input.style.borderColor = '#dc2626';
+            } else {
+                input.style.borderColor = '#10b981';
+            }
+        }
+        
+        if (phoneInput) {
+            phoneInput.addEventListener('blur', function() {
+                validatePhoneNumber(this);
+            });
+        }
+        
+        if (emailInput) {
+            emailInput.addEventListener('blur', function() {
+                validateEmail(this);
+            });
+        }
+    });
+</script>
+{% endblock %}

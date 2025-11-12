@@ -295,6 +295,17 @@
         border-color: var(--primary);
     }
 
+    .btn-wishlist:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-wishlist.added {
+        background: var(--secondary);
+        color: white;
+        border-color: var(--secondary);
+    }
+
     /* Delivery Info */
     .delivery-info {
         margin-top: 1rem;
@@ -314,6 +325,45 @@
     .delivery-icon {
         color: #007600;
         min-width: 16px;
+    }
+
+    /* Toast Notifications */
+    .toast {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .toast.show {
+        transform: translateX(0);
+    }
+
+    .toast.success {
+        background: var(--secondary);
+    }
+
+    .toast.error {
+        background: #ef4444;
+    }
+
+    .toast.info {
+        background: var(--primary);
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1000;
     }
 
     /* Related Books */
@@ -518,6 +568,12 @@
         .related-books-grid {
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         }
+
+        .toast {
+            right: 10px;
+            left: 10px;
+            max-width: none;
+        }
     }
 </style>
 {% endblock %}
@@ -548,7 +604,7 @@
                                 {% if not item.is_available or item.stock_quantity == 0 %}disabled{% endif %}>
                             Add to Cart
                         </button>
-                        <button class="btn-wishlist" id="wishlistBtnMobile">
+                        <button class="btn-wishlist" id="wishlistBtnMobile" data-book-slug="{{ item.slug }}">
                             Add to Wish List
                         </button>
                     </div>
@@ -580,7 +636,7 @@
             <!-- Price -->
             <div class="price-section">
                 <div class="price">${{ item.price }}</div>
-                <div class="shipping-note">+ $3.99 shipping</div>
+                <div class="shipping-note"> Free shipping</div>
             </div>
 
             <!-- Stock Status -->
@@ -643,7 +699,7 @@
                             {% if not item.is_available or item.stock_quantity == 0 %}disabled{% endif %}>
                         Add to Cart
                     </button>
-                    <button class="btn-wishlist" id="wishlistBtn">
+                    <button class="btn-wishlist" id="wishlistBtn" data-book-slug="{{ item.slug }}">
                         Add to Wish List
                     </button>
                 </div>
@@ -704,6 +760,10 @@
         <i class="fas fa-spinner fa-spin"></i>
     </div>
 </div>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container"></div>
+
 {% include 'eco/footer.html' %}
 {% endblock %}
 
@@ -722,7 +782,7 @@
         const continueShoppingBtn = document.querySelector('.btn-continue-shopping');
         const loadingOverlay = document.getElementById('loadingOverlay');
 
-        console.log('Book Detail Page Loaded - Add to Cart functionality ready');
+        console.log('Book Detail Page Loaded - All functionality ready');
 
         // Quantity controls
         function adjustQuantity(change) {
@@ -762,8 +822,10 @@
             
             // Check if user is logged in
             {% if not user.is_authenticated %}
-                alert('Please log in to add items to cart');
-                window.location.href = '/login/';
+                showToast('Please log in to add items to cart', 'error');
+                setTimeout(() => {
+                    window.location.href = '/login/';
+                }, 2000);
                 return;
             {% endif %}
 
@@ -796,45 +858,144 @@
                     successModal.style.display = 'block';
                     updateCartCount(data.total_items);
                     
-                    // Show success toast if available
-                    if (typeof showToast === 'function') {
-                        showToast(data.message || 'Book added to cart!', 'success');
-                    }
+                    // Show success toast
+                    showToast('Book added to cart!', 'success');
                 } else {
                     console.error('API returned error:', data.message);
-                    alert('Error: ' + data.message);
+                    showToast('Error: ' + data.message, 'error');
                 }
             } catch (error) {
                 console.error('Fetch error:', error);
-                alert('An error occurred while adding to cart. Please try again.');
+                showToast('An error occurred while adding to cart. Please try again.', 'error');
             } finally {
                 loadingOverlay.style.display = 'none';
             }
         }
 
-        // Add event listeners for both desktop and mobile buttons
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', addToCart);
-            console.log('Desktop Add to Cart button listener added');
-        }
-        
-        if (addToCartBtnMobile) {
-            addToCartBtnMobile.addEventListener('click', addToCart);
-            console.log('Mobile Add to Cart button listener added');
+        // Add to Wishlist functionality
+        async function addToWishlist(bookSlug, button) {
+            console.log('Add to Wishlist button clicked for:', bookSlug);
+            
+            // Check if user is logged in
+            {% if not user.is_authenticated %}
+                showToast('Please log in to add items to your wishlist', 'error');
+                setTimeout(() => {
+                    window.location.href = '/login/';
+                }, 2000);
+                return;
+            {% endif %}
+
+            // Show loading on the button
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            button.disabled = true;
+
+            try {
+                const url = `/add-to-wish/${bookSlug}/`;
+                console.log('Making wishlist request to:', url);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                console.log('Wishlist response status:', response.status);
+
+                if (response.ok) {
+                    // Show success message
+                    showToast('Book added to your wishlist!', 'success');
+                    
+                    // Update wishlist count
+                    updateWishlistCount();
+                    
+                    // Update button state
+                    button.innerHTML = '<i class="fas fa-heart"></i> In Wishlist';
+                    button.classList.add('added');
+                    
+                } else {
+                    throw new Error('Failed to add to wishlist');
+                }
+            } catch (error) {
+                console.error('Wishlist fetch error:', error);
+                showToast('Failed to add to wishlist. Please try again.', 'error');
+                
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
         }
 
-        // Wishlist functionality
-        function toggleWishlist() {
-            alert('Added to wishlist!');
-            console.log('Wishlist button clicked');
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                console.error('Toast container not found');
+                return;
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${getToastIcon(type)}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast with animation
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Remove toast after duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
         }
 
-        if (wishlistBtn) {
-            wishlistBtn.addEventListener('click', toggleWishlist);
+        function getToastIcon(type) {
+            const icons = {
+                'success': 'check-circle',
+                'error': 'exclamation-circle',
+                'info': 'info-circle'
+            };
+            return icons[type] || 'info-circle';
         }
-        
-        if (wishlistBtnMobile) {
-            wishlistBtnMobile.addEventListener('click', toggleWishlist);
+
+        // Update wishlist count
+        function updateWishlistCount() {
+            const wishlistCountElements = document.querySelectorAll('.wishlist-count');
+            wishlistCountElements.forEach(element => {
+                const currentCount = parseInt(element.textContent) || 0;
+                element.textContent = currentCount + 1;
+                // Add visual feedback
+                element.style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 300);
+            });
+        }
+
+        // Update cart count
+        function updateCartCount(count) {
+            console.log('Updating cart count to:', count);
+            const cartCountElements = document.querySelectorAll('.cart-count');
+            cartCountElements.forEach(element => {
+                element.textContent = count;
+                // Add visual feedback
+                element.style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 300);
+            });
         }
 
         // Utility functions
@@ -852,16 +1013,26 @@
             }
         }
 
-        function updateCartCount(count) {
-            console.log('Updating cart count to:', count);
-            const cartCountElements = document.querySelectorAll('.cart-count');
-            cartCountElements.forEach(element => {
-                element.textContent = count;
-                // Add visual feedback
-                element.style.transform = 'scale(1.3)';
-                setTimeout(() => {
-                    element.style.transform = 'scale(1)';
-                }, 300);
+        // Add event listeners
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', addToCart);
+        }
+        
+        if (addToCartBtnMobile) {
+            addToCartBtnMobile.addEventListener('click', addToCart);
+        }
+
+        if (wishlistBtn) {
+            wishlistBtn.addEventListener('click', function() {
+                const bookSlug = this.getAttribute('data-book-slug');
+                addToWishlist(bookSlug, this);
+            });
+        }
+
+        if (wishlistBtnMobile) {
+            wishlistBtnMobile.addEventListener('click', function() {
+                const bookSlug = this.getAttribute('data-book-slug');
+                addToWishlist(bookSlug, this);
             });
         }
 
@@ -887,10 +1058,7 @@
         // Debug info
         console.log('Current book:', '{{ item.title }}');
         console.log('Book slug:', '{{ item.slug }}');
-        console.log('Expected API URL:', `/cart/add/{{ item.slug }}/`);
         console.log('User authenticated:', {% if user.is_authenticated %}true{% else %}false{% endif %});
-        console.log('Book available:', {% if item.is_available %}true{% else %}false{% endif %});
-        console.log('Stock quantity:', {{ item.stock_quantity }});
     });
 </script>
 {% endblock %}

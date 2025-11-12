@@ -1,628 +1,629 @@
-{% extends "eco/base.html" %}
-
-{% block content %}
+{% extends "eco/base.html" %} {% block content %}
 <style>
-    .profile-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-        animation: fadeInUp 0.6s ease-out;
-    }
+  .profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    animation: fadeInUp 0.6s ease-out;
+  }
 
-    .profile-header {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        margin-bottom: 3rem;
-        padding: 2rem;
-        background: var(--card-bg);
-        border-radius: 20px;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
-    }
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
 
-    .avatar-large {
-        width: 100px;
-        height: 100px;
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: white;
-        border: 4px solid var(--light);
-        box-shadow: var(--shadow-lg);
-        /* Add these for photo support */
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        position: relative;
-    }
+  .avatar-large {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    border: 4px solid var(--light);
+    box-shadow: var(--shadow-lg);
+    /* Add these for photo support */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+  }
 
-    .avatar-text {
-        /* Text shown when no photo */
-    }
+  .avatar-text {
+    /* Text shown when no photo */
+  }
 
-    .avatar-large.has-photo .avatar-text {
-        display: none; /* Hide text when photo exists */
-    }
+  .avatar-large.has-photo .avatar-text {
+    display: none; /* Hide text when photo exists */
+  }
 
-    .user-info {
-        flex: 1;
-    }
+  .user-info {
+    flex: 1;
+  }
 
-    .user-name {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-color);
-        margin-bottom: 0.5rem;
-    }
+  .user-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
 
-    .user-title {
-        font-size: 1.1rem;
-        color: var(--gray);
-        font-weight: 500;
-    }
+  .user-title {
+    font-size: 1.1rem;
+    color: var(--gray);
+    font-weight: 500;
+  }
 
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+  }
+
+  .sidebar {
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-section {
+    padding: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-section:last-child {
+    border-bottom: none;
+  }
+
+  .sidebar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sidebar-title::before {
+    content: "";
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 2px;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+  }
+
+  .menu-item:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateX(5px);
+    box-shadow: var(--shadow);
+  }
+
+  .menu-item:hover .menu-icon {
+    transform: scale(1.1);
+  }
+
+  .menu-item.active {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    box-shadow: var(--shadow);
+  }
+
+  .menu-icon {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    width: 20px;
+    text-align: center;
+  }
+
+  .menu-text {
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .menu-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .content-area {
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    min-height: 500px;
+  }
+
+  .content-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .content-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--gray-light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: var(--gray);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .order-card {
+    background: var(--gray-light);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary);
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .order-id {
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .order-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .status-pending {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .status-delivered {
+    background: #d1fae5;
+    color: #059669;
+  }
+
+  .status-processing {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+
+  .status-cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .order-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .order-detail {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-label {
+    color: var(--gray);
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .detail-value {
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .logout-section {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border-radius: 12px;
+    margin-top: 2rem;
+  }
+
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-decoration: none;
+    justify-content: center;
+  }
+
+  .logout-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
+  /* Dark mode adjustments */
+  [data-theme="dark"] .stat-card,
+  [data-theme="dark"] .order-card {
+    background: var(--bg-secondary);
+  }
+
+  [data-theme="dark"] .logout-section {
+    background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  }
+
+  /* Responsive design */
+  @media (max-width: 968px) {
     .profile-grid {
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 2rem;
+      grid-template-columns: 1fr;
     }
 
     .sidebar {
-        background: var(--card-bg);
-        border-radius: 20px;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
-        padding: 0;
-        overflow: hidden;
-    }
-
-    .sidebar-section {
-        padding: 2rem;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .sidebar-section:last-child {
-        border-bottom: none;
-    }
-
-    .sidebar-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--text-color);
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .sidebar-title::before {
-        content: '';
-        width: 4px;
-        height: 20px;
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        border-radius: 2px;
-    }
-
-    .menu-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
-
-    .menu-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        text-decoration: none;
-        color: var(--text-color);
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
-    }
-
-    .menu-item:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateX(5px);
-        box-shadow: var(--shadow);
-    }
-
-    .menu-item:hover .menu-icon {
-        transform: scale(1.1);
-    }
-
-    .menu-item.active {
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        color: white;
-        box-shadow: var(--shadow);
-    }
-
-    .menu-icon {
-        font-size: 1.2rem;
-        transition: transform 0.3s ease;
-        width: 20px;
-        text-align: center;
-    }
-
-    .menu-text {
-        font-weight: 500;
-        flex: 1;
-    }
-
-    .menu-badge {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: 600;
+      order: 2;
     }
 
     .content-area {
-        background: var(--card-bg);
-        border-radius: 20px;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
-        padding: 2rem;
-        min-height: 500px;
+      order: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 1rem;
     }
 
-    .content-header {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid var(--border);
-    }
-
-    .content-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-color);
-        margin: 0;
+    .profile-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
     }
 
     .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .stat-card {
-        background: var(--gray-light);
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        border: 1px solid var(--border);
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow);
-    }
-
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-        color: var(--gray);
-        font-size: 0.9rem;
-        font-weight: 500;
+      grid-template-columns: repeat(2, 1fr);
     }
 
     .orders-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
     }
 
-    .order-card {
-        background: var(--gray-light);
-        padding: 1.5rem;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        transition: all 0.3s ease;
+    .menu-item {
+      padding: 0.75rem 1rem;
     }
+  }
 
-    .order-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow);
-        border-color: var(--primary);
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
     }
-
-    .order-header {
-        display: flex;
-        justify-content: between;
-        align-items: center;
-        margin-bottom: 1rem;
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-
-    .order-id {
-        font-weight: 600;
-        color: var(--text-color);
-    }
-
-    .order-status {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-
-    .status-pending {
-        background: #fef3c7;
-        color: #d97706;
-    }
-
-    .status-delivered {
-        background: #d1fae5;
-        color: #059669;
-    }
-
-    .status-processing {
-        background: #dbeafe;
-        color: #2563eb;
-    }
-
-    .status-cancelled {
-        background: #fee2e2;
-        color: #dc2626;
-    }
-
-    .order-details {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        font-size: 0.9rem;
-    }
-
-    .order-detail {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .detail-label {
-        color: var(--gray);
-        font-size: 0.8rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .detail-value {
-        font-weight: 600;
-        color: var(--text-color);
-    }
-
-    .logout-section {
-        padding: 1.5rem;
-        background: linear-gradient(135deg, #fee2e2, #fecaca);
-        border-radius: 12px;
-        margin-top: 2rem;
-    }
-
-    .logout-btn {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem 1.5rem;
-        background: #dc2626;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        width: 100%;
-        text-decoration: none;
-        justify-content: center;
-    }
-
-    .logout-btn:hover {
-        background: #b91c1c;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow);
-    }
-
-    /* Dark mode adjustments */
-    [data-theme="dark"] .stat-card,
-    [data-theme="dark"] .order-card {
-        background: var(--bg-secondary);
-    }
-
-    [data-theme="dark"] .logout-section {
-        background: linear-gradient(135deg, #7f1d1d, #991b1b);
-    }
-
-    /* Responsive design */
-    @media (max-width: 968px) {
-        .profile-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .sidebar {
-            order: 2;
-        }
-        
-        .content-area {
-            order: 1;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .profile-container {
-            padding: 1rem;
-        }
-        
-        .profile-header {
-            flex-direction: column;
-            text-align: center;
-            gap: 1rem;
-        }
-        
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        
-        .orders-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .menu-item {
-            padding: 0.75rem 1rem;
-        }
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+  }
 </style>
 
 <div class="profile-container">
-    <!-- Profile Header - UPDATED FOR PHOTO DISPLAY -->
-    <div class="profile-header">
-        <div class="avatar-large {% if user.profile.profile_photo %}has-photo{% endif %}" 
-             style="{% if user.profile.profile_photo %}background-image: url('{{ user.profile.profile_photo.url }}');{% endif %}">
-            <div class="avatar-text">
-                {{ user.email|first|upper }}
-            </div>
+  <!-- Profile Header - UPDATED FOR PHOTO DISPLAY -->
+  <div class="profile-header">
+    <div
+      class="avatar-large {% if user.profile.profile_photo %}has-photo{% endif %}"
+      style="{% if user.profile.profile_photo %}background-image: url('{{ user.profile.profile_photo.url }}');{% endif %}"
+    >
+      <div class="avatar-text">{{ user.email|first|upper }}</div>
+    </div>
+    <div class="user-info">
+      <h1 class="user-name">
+        {% if user.profile.first_name %} {{ user.profile.first_name }} {{
+        user.profile.last_name }} {% else %} {{
+        user.email|cut:"@"|cut:".com"|cut:".org"|cut:".net"|title }} {% endif %}
+      </h1>
+      <p class="user-title">Book Lover</p>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="profile-grid">
+    <!-- Sidebar Menu -->
+    <div class="sidebar">
+      <!-- My Orders Section -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">My Orders</h3>
+        <div class="menu-grid">
+          <a href="#" class="menu-item active">
+            <span class="menu-icon">⏳</span>
+            <span class="menu-text">Pending Payment</span>
+            <span class="menu-badge">2</span>
+          </a>
+          <a href="#" class="menu-item">
+            <span class="menu-icon">✅</span>
+            <span class="menu-text">Delivered</span>
+            <span class="menu-badge">5</span>
+          </a>
+          <a href="#" class="menu-item">
+            <span class="menu-icon">🔄</span>
+            <span class="menu-text">Processing</span>
+            <span class="menu-badge">1</span>
+          </a>
+          <a href="#" class="menu-item">
+            <span class="menu-icon">❌</span>
+            <span class="menu-text">Cancelled</span>
+            <span class="menu-badge">0</span>
+          </a>
         </div>
-        <div class="user-info">
-            <h1 class="user-name">
-                {% if user.profile.first_name %}
-                    {{ user.profile.first_name }} {{ user.profile.last_name }}
-                {% else %}
-                    {{ user.email|cut:"@"|cut:".com"|cut:".org"|cut:".net"|title }}
-                {% endif %}
-            </h1>
-            <p class="user-title">Book Lover</p>
+      </div>
+
+      <!-- Account Section -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Account</h3>
+        <div class="menu-grid">
+          <a href="{% url 'users:profile_edit' %}" class="menu-item">
+            <span class="menu-icon">👤</span>
+            <span class="menu-text">Edit Profile</span>
+          </a>
+          <a href="{% url 'eco:shipping-address' %}" class="menu-item">
+            <span class="menu-icon">📦</span>
+            <span class="menu-text">Shipping Address</span>
+          </a>
+          <a href="{% url 'eco:wish-summary' %}" class="menu-item">
+            <!-- FIXED LINE -->
+            <span class="menu-icon">❤️</span>
+            <span class="menu-text">Wishlist</span>
+            <span class="menu-badge">
+              {{ request.user.wishlist_set.count }}
+            </span>
+          </a>
+          <a href="{% url 'eco:contact' %}" class="menu-item">
+            <span class="menu-icon">📞</span>
+            <span class="menu-text">Customer Care</span>
+          </a>
         </div>
+      </div>
+
+      <!-- Logout Section -->
+      <div class="sidebar-section">
+        <a href="{% url 'users:logout' %}" class="logout-btn">
+          <span class="menu-icon">🚪</span>
+          <span class="menu-text">Logout</span>
+        </a>
+      </div>
     </div>
 
-    <!-- Main Content Grid -->
-    <div class="profile-grid">
-        <!-- Sidebar Menu -->
-        <div class="sidebar">
-            <!-- My Orders Section -->
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">My Orders</h3>
-                <div class="menu-grid">
-                    <a href="#" class="menu-item active">
-                        <span class="menu-icon">⏳</span>
-                        <span class="menu-text">Pending Payment</span>
-                        <span class="menu-badge">2</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <span class="menu-icon">✅</span>
-                        <span class="menu-text">Delivered</span>
-                        <span class="menu-badge">5</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <span class="menu-icon">🔄</span>
-                        <span class="menu-text">Processing</span>
-                        <span class="menu-badge">1</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <span class="menu-icon">❌</span>
-                        <span class="menu-text">Cancelled</span>
-                        <span class="menu-badge">0</span>
-                    </a>
-                </div>
-            </div>
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <div class="content-header">
+        <h2 class="content-title">Order Overview</h2>
+      </div>
 
-            <!-- Account Section -->
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Account</h3>
-                <div class="menu-grid">
-                    <a href="{% url 'users:profile_edit' %}" class="menu-item">
-                        <span class="menu-icon">👤</span>
-                        <span class="menu-text">Edit Profile</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <span class="menu-icon">📦</span>
-                        <span class="menu-text">Shipping Address</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <span class="menu-icon">❤️</span>
-                        <span class="menu-text">Wishlist</span>
-                        <span class="menu-badge">3</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <span class="menu-icon">📞</span>
-                        <span class="menu-text">Customer Care</span>
-                    </a>
-                </div>
-            </div>
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">$247.50</div>
+          <div class="stat-label">Total Spent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Books Read</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Wishlist Items</div>
+        </div>
+      </div>
 
-            <!-- Logout Section -->
-            <div class="sidebar-section">
-                <a href="{% url 'users:logout' %}" class="logout-btn">
-                    <span class="menu-icon">🚪</span>
-                    <span class="menu-text">Logout</span>
-                </a>
+      <!-- Recent Orders -->
+      <h3 style="margin-bottom: 1rem; color: var(--text-color)">
+        Recent Orders
+      </h3>
+      <div class="orders-grid">
+        <div class="order-card">
+          <div class="order-header">
+            <span class="order-id">#ORD-7832</span>
+            <span class="order-status status-pending">Pending</span>
+          </div>
+          <div class="order-details">
+            <div class="order-detail">
+              <span class="detail-label">Date</span>
+              <span class="detail-value">Dec 15, 2024</span>
             </div>
+            <div class="order-detail">
+              <span class="detail-label">Amount</span>
+              <span class="detail-value">$49.99</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Items</span>
+              <span class="detail-value">2 Books</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="content-area">
-            <div class="content-header">
-                <h2 class="content-title">Order Overview</h2>
+        <div class="order-card">
+          <div class="order-header">
+            <span class="order-id">#ORD-7815</span>
+            <span class="order-status status-delivered">Delivered</span>
+          </div>
+          <div class="order-details">
+            <div class="order-detail">
+              <span class="detail-label">Date</span>
+              <span class="detail-value">Dec 10, 2024</span>
             </div>
-
-            <!-- Stats Overview -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">8</div>
-                    <div class="stat-label">Total Orders</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">$247.50</div>
-                    <div class="stat-label">Total Spent</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Books Read</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">12</div>
-                    <div class="stat-label">Wishlist Items</div>
-                </div>
+            <div class="order-detail">
+              <span class="detail-label">Amount</span>
+              <span class="detail-value">$32.50</span>
             </div>
-
-            <!-- Recent Orders -->
-            <h3 style="margin-bottom: 1rem; color: var(--text-color);">Recent Orders</h3>
-            <div class="orders-grid">
-                <div class="order-card">
-                    <div class="order-header">
-                        <span class="order-id">#ORD-7832</span>
-                        <span class="order-status status-pending">Pending</span>
-                    </div>
-                    <div class="order-details">
-                        <div class="order-detail">
-                            <span class="detail-label">Date</span>
-                            <span class="detail-value">Dec 15, 2024</span>
-                        </div>
-                        <div class="order-detail">
-                            <span class="detail-label">Amount</span>
-                            <span class="detail-value">$49.99</span>
-                        </div>
-                        <div class="order-detail">
-                            <span class="detail-label">Items</span>
-                            <span class="detail-value">2 Books</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="order-card">
-                    <div class="order-header">
-                        <span class="order-id">#ORD-7815</span>
-                        <span class="order-status status-delivered">Delivered</span>
-                    </div>
-                    <div class="order-details">
-                        <div class="order-detail">
-                            <span class="detail-label">Date</span>
-                            <span class="detail-value">Dec 10, 2024</span>
-                        </div>
-                        <div class="order-detail">
-                            <span class="detail-label">Amount</span>
-                            <span class="detail-value">$32.50</span>
-                        </div>
-                        <div class="order-detail">
-                            <span class="detail-label">Items</span>
-                            <span class="detail-value">1 Book</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="order-card">
-                    <div class="order-header">
-                        <span class="order-id">#ORD-7798</span>
-                        <span class="order-status status-processing">Processing</span>
-                    </div>
-                    <div class="order-details">
-                        <div class="order-detail">
-                            <span class="detail-label">Date</span>
-                            <span class="detail-value">Dec 5, 2024</span>
-                        </div>
-                        <div class="order-detail">
-                            <span class="detail-label">Amount</span>
-                            <span class="detail-value">$87.25</span>
-                        </div>
-                        <div class="order-detail">
-                            <span class="detail-label">Items</span>
-                            <span class="detail-value">3 Books</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="order-detail">
+              <span class="detail-label">Items</span>
+              <span class="detail-value">1 Book</span>
             </div>
+          </div>
         </div>
+
+        <div class="order-card">
+          <div class="order-header">
+            <span class="order-id">#ORD-7798</span>
+            <span class="order-status status-processing">Processing</span>
+          </div>
+          <div class="order-details">
+            <div class="order-detail">
+              <span class="detail-label">Date</span>
+              <span class="detail-value">Dec 5, 2024</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Amount</span>
+              <span class="detail-value">$87.25</span>
+            </div>
+            <div class="order-detail">
+              <span class="detail-label">Items</span>
+              <span class="detail-value">3 Books</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-    // Add active state to menu items
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuItems = document.querySelectorAll('.menu-item');
-        
-        menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (this.getAttribute('href') === '#') {
-                    e.preventDefault();
-                }
-                
-                // Remove active class from all items
-                menuItems.forEach(i => i.classList.remove('active'));
-                
-                // Add active class to clicked item
-                this.classList.add('active');
-            });
-        });
+  // Add active state to menu items
+  document.addEventListener("DOMContentLoaded", function () {
+    const menuItems = document.querySelectorAll(".menu-item");
 
-        // Extract username from email for display
-        function getUsernameFromEmail(email) {
-            // Simple extraction - take part before @
-            return email.split('@')[0];
+    menuItems.forEach((item) => {
+      item.addEventListener("click", function (e) {
+        if (this.getAttribute("href") === "#") {
+          e.preventDefault();
         }
 
-        // Update the username display
-        const userEmail = '{{ user.email }}';
-        const username = getUsernameFromEmail(userEmail);
-        const usernameElement = document.querySelector('.user-name');
-        if (usernameElement) {
-            // Format the username (capitalize first letter of each word)
-            const formattedUsername = username
-                .replace(/[^a-zA-Z0-9]/g, ' ')
-                .replace(/\b\w/g, l => l.toUpperCase())
-                .trim();
-            
-            if (formattedUsername && !usernameElement.textContent.includes('@')) {
-                usernameElement.textContent = formattedUsername;
-            }
-        }
+        // Remove active class from all items
+        menuItems.forEach((i) => i.classList.remove("active"));
+
+        // Add active class to clicked item
+        this.classList.add("active");
+      });
     });
+
+    // Extract username from email for display
+    function getUsernameFromEmail(email) {
+      // Simple extraction - take part before @
+      return email.split("@")[0];
+    }
+
+    // Update the username display
+    const userEmail = "{{ user.email }}";
+    const username = getUsernameFromEmail(userEmail);
+    const usernameElement = document.querySelector(".user-name");
+    if (usernameElement) {
+      // Format the username (capitalize first letter of each word)
+      const formattedUsername = username
+        .replace(/[^a-zA-Z0-9]/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase())
+        .trim();
+
+      if (formattedUsername && !usernameElement.textContent.includes("@")) {
+        usernameElement.textContent = formattedUsername;
+      }
+    }
+  });
 </script>
 {% endblock %}

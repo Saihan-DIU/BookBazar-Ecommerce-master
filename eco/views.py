@@ -617,7 +617,7 @@ class WishSummaryView(LoginRequiredMixin, View):
             context = {
                 'object': wish
             }
-            return render(self.request, 'eco/customer-wishlist.html', context)
+            return render(self.request, 'eco/customer_wishlist.html', context)
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have a wishlist")
             return redirect("eco:home")
@@ -631,9 +631,26 @@ def add_to_wish(request, slug):
     )
     
     if created:
-        messages.info(request, "Book was added to your wishlist")
+        message = "Book was added to your wishlist"
+        message_type = 'success'
     else:
-        messages.warning(request, "Book was already in your wishlist")
+        message = "Book was already in your wishlist"
+        message_type = 'info'
+    
+    # Check if it's an AJAX request
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True, 
+            'message': message,
+            'created': created
+        })
+    
+    # For non-AJAX requests, use messages and redirect
+    if created:
+        messages.info(request, message)
+    else:
+        messages.warning(request, message)
+    
     return redirect('eco:product-detail', slug=book.slug)
 
 @login_required
@@ -643,13 +660,30 @@ def remove_from_wish(request, slug):
         book=book,
         user=request.user
     )
+    
     if wish_qs.exists():
         wish = wish_qs[0]
         wish.delete()
+        
+        # Check if it's an AJAX request
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True, 
+                'message': 'Book removed from your wishlist'
+            })
+        
         messages.info(request, "Book was removed from your wishlist.")
         return redirect("eco:wish-summary")
     else:
-         return redirect("eco:wish-summary")
+        # Check if it's an AJAX request
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False, 
+                'message': 'Book not found in your wishlist'
+            }, status=404)
+        
+        messages.error(request, "Book not found in your wishlist.")
+        return redirect("eco:wish-summary")
 
 # ==================== COUPONS ====================
 
@@ -786,6 +820,65 @@ class ContactView(FormView):
         except Exception as e:
             messages.error(self.request, "There was an error sending your message.")
         return super().form_valid(form)
+    
+    # ==================== SHIPPING ADDRESS ====================
+
+
+@login_required
+def shipping_address_view(request):
+    """Shipping address management page using existing Address model"""
+    
+    # Get user's shipping addresses
+    shipping_addresses = Address.objects.filter(
+        user=request.user, 
+        address_type='S'
+    ).order_by('-default')
+    
+    # Get default shipping address
+    default_shipping_address = shipping_addresses.filter(default=True).first()
+    
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.address_type = 'S'  # Set as shipping address
+            
+            # If this is set as default, unset other defaults
+            if address.default:
+                Address.objects.filter(
+                    user=request.user, 
+                    address_type='S', 
+                    default=True
+                ).update(default=False)
+            
+            address.save()
+            messages.success(request, 'Shipping address saved successfully!')
+            return redirect('eco:shipping-address')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AddressForm(initial={'address_type': 'S'})
+    
+    # Get cart count for navbar
+    cart_count = 0
+    if request.user.is_authenticated:
+        try:
+            cart = Cart.objects.get(user=request.user)
+            cart_count = cart.total_items
+        except Cart.DoesNotExist:
+            cart_count = 0
+    
+    context = {
+        'form': form,
+        'shipping_addresses': shipping_addresses,
+        'default_shipping_address': default_shipping_address,
+        'cart_count': cart_count,
+        'categories': Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
+    }
+    return render(request, 'eco/shipping_address.html', context)
 
 class AccountUpdate(UpdateView):
     pass
@@ -953,3 +1046,115 @@ class ProductListView(ListView):
             context['current_category'] = get_object_or_404(Category, slug=category_slug)
             
         return context
+    
+    # ... all your existing views code ...
+
+# ==================== ADDRESS MANAGEMENT VIEWS ====================
+
+@login_required
+@require_POST
+def delete_address(request, address_id):
+    """Delete a shipping address"""
+    try:
+        address = Address.objects.get(id=address_id, user=request.user)
+        address_title = f"{address.street_address}, {address.city}"
+        address.delete()
+        
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'message': f'Address "{address_title}" deleted successfully!'
+            })
+        
+        messages.success(request, f'Address "{address_title}" deleted successfully!')
+        return redirect('eco:shipping-address')
+        
+    except Address.DoesNotExist:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'error': 'Address not found'
+            }, status=404)
+        
+        messages.error(request, 'Address not found')
+        return redirect('eco:shipping-address')
+
+@login_required
+@require_POST
+def set_default_address(request, address_id):
+    """Set an address as default shipping address"""
+    try:
+        # First, unset any existing default addresses
+        Address.objects.filter(
+            user=request.user, 
+            address_type='S', 
+            default=True
+        ).update(default=False)
+        
+        # Set the new default address
+        address = Address.objects.get(id=address_id, user=request.user)
+        address.default = True
+        address.save()
+        
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'message': 'Default shipping address updated successfully!'
+            })
+        
+        messages.success(request, 'Default shipping address updated successfully!')
+        return redirect('eco:shipping-address')
+        
+    except Address.DoesNotExist:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': False,
+                'error': 'Address not found'
+            }, status=404)
+        
+        messages.error(request, 'Address not found')
+        return redirect('eco:shipping-address')
+
+@login_required
+def edit_address(request, address_id):
+    """Edit an existing shipping address"""
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+    
+    if request.method == 'POST':
+        form = AddressForm(request.POST, instance=address)
+        if form.is_valid():
+            address = form.save(commit=False)
+            
+            # If this is set as default, unset other defaults
+            if address.default:
+                Address.objects.filter(
+                    user=request.user, 
+                    address_type='S', 
+                    default=True
+                ).exclude(id=address_id).update(default=False)
+            
+            address.save()
+            messages.success(request, 'Address updated successfully!')
+            return redirect('eco:shipping-address')
+    else:
+        form = AddressForm(instance=address)
+    
+    # Get cart count for navbar
+    cart_count = 0
+    if request.user.is_authenticated:
+        try:
+            cart = Cart.objects.get(user=request.user)
+            cart_count = cart.total_items
+        except Cart.DoesNotExist:
+            cart_count = 0
+    
+    context = {
+        'form': form,
+        'editing': True,
+        'address': address,
+        'cart_count': cart_count,
+        'categories': Category.objects.annotate(
+            total_books=Count('books', filter=Q(books__is_available=True))
+        )
+    }
+    return render(request, 'eco/shipping_address.html', context)

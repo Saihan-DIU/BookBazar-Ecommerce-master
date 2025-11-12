@@ -427,6 +427,15 @@ class Order(models.Model):
         return self.get_total()
 
 class Address(models.Model):
+
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    alternate_email = models.EmailField(blank=True)
+    is_business_address = models.BooleanField(default=False)
+    city = models.CharField(max_length=100, blank=True) 
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     street_address = models.CharField(max_length=100)
     apartment_address = models.CharField(max_length=100, blank=True)
