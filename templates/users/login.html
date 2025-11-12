@@ -1,588 +1,656 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - BookBazar</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-light: #3b82f6;
-            --primary-dark: #1d4ed8;
-            --secondary: #10b981;
-            --accent: #8b5cf6;
-            --dark: #1f2937;
-            --light: #ffffff;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --error-light: #fef2f2;
-            --error-dark: #dc2626;
-            --success-light: #f0fdf4;
-            --success-dark: #16a34a;
-            --warning-light: #fffbeb;
-            --warning-dark: #d97706;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      :root {
+        --primary: #2563eb;
+        --primary-light: #3b82f6;
+        --primary-dark: #1d4ed8;
+        --secondary: #10b981;
+        --accent: #8b5cf6;
+        --dark: #1f2937;
+        --light: #ffffff;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --error-light: #fef2f2;
+        --error-dark: #dc2626;
+        --success-light: #f0fdf4;
+        --success-dark: #16a34a;
+        --warning-light: #fffbeb;
+        --warning-dark: #d97706;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      [data-theme="dark"] {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-card: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+          0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3),
+          0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        --error-light: #7f1d1d;
+        --error-dark: #fca5a5;
+        --success-light: #14532d;
+        --success-dark: #86efac;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+            135deg,
+            rgba(43, 57, 88, 0.9) 0%,
+            rgba(43, 57, 88, 0.9) 100%
+          ),
+          url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1950&q=80")
+            center/cover;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      [data-theme="dark"] body {
+        background: linear-gradient(
+            135deg,
+            rgba(43, 57, 88, 0.9) 0%,
+            rgba(43, 57, 88, 0.9) 100%
+          ),
+          url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1950&q=80")
+            center/cover;
+      }
+
+      .login-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 3rem 2.5rem;
+        border-radius: 24px;
+        box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        width: 100%;
+        max-width: 440px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      [data-theme="dark"] .login-container {
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .login-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: 24px 24px 0 0;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        color: var(--gray-700);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      [data-theme="dark"] .theme-toggle {
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--gray-300);
+      }
+
+      .theme-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow);
+      }
+
+      .light-mode-icon {
+        display: block;
+      }
+
+      .dark-mode-icon {
+        display: none;
+      }
+
+      [data-theme="dark"] .light-mode-icon {
+        display: none;
+      }
+
+      [data-theme="dark"] .dark-mode-icon {
+        display: block;
+      }
+
+      .auth-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+      }
+
+      .auth-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+      }
+
+      [data-theme="dark"] .auth-title {
+        color: var(--text-primary);
+      }
+
+      .auth-subtitle {
+        color: var(--gray-500);
+        font-size: 1rem;
+      }
+
+      [data-theme="dark"] .auth-subtitle {
+        color: var(--text-muted);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      [data-theme="dark"] .form-label {
+        color: var(--text-secondary);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--gray-900);
+        backdrop-filter: blur(10px);
+      }
+
+      [data-theme="dark"] .form-input {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      [data-theme="dark"] .form-input:focus {
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+        background: rgba(30, 41, 59, 0.95);
+      }
+
+      .form-input::placeholder {
+        color: var(--gray-400);
+      }
+
+      [data-theme="dark"] .form-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .btn {
+        width: 100%;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-light)
+        );
+        color: white;
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      /* Forgot Password Link Styles */
+      .forgot-password-container {
+        text-align: right;
+        margin-bottom: 1.5rem;
+        margin-top: -0.5rem;
+      }
+
+      .forgot-password-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .forgot-password-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+        transform: translateX(2px);
+      }
+
+      [data-theme="dark"] .forgot-password-link {
+        color: var(--primary-light);
+      }
+
+      [data-theme="dark"] .forgot-password-link:hover {
+        color: var(--primary);
+      }
+
+      .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--gray-200);
+      }
+
+      [data-theme="dark"] .auth-footer {
+        border-top-color: var(--border-color);
+      }
+
+      .register-link {
+        color: var(--gray-600);
+        font-size: 0.875rem;
+      }
+
+      [data-theme="dark"] .register-link {
+        color: var(--text-muted);
+      }
+
+      .register-link a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      .register-link a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+      }
+
+      .messages {
+        margin-bottom: 1.5rem;
+      }
+
+      .alert {
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        border-left: 4px solid;
+        animation: slideInDown 0.3s ease;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      [data-theme="dark"] .alert {
+        background: rgba(30, 41, 59, 0.9);
+      }
+
+      .alert-error {
+        color: var(--error-dark);
+        border-left-color: var(--error-dark);
+      }
+
+      .alert-success {
+        color: var(--success-dark);
+        border-left-color: var(--success-dark);
+      }
+
+      .alert-warning {
+        color: var(--warning-dark);
+        border-left-color: var(--warning-dark);
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--gray-400);
+        cursor: pointer;
+        padding: 0.25rem;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 4px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      [data-theme="dark"] .password-toggle {
+        background: rgba(30, 41, 59, 0.8);
+      }
+
+      .password-input-container {
+        position: relative;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
-
-        [data-theme="dark"] {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-            --error-light: #7f1d1d;
-            --error-dark: #fca5a5;
-            --success-light: #14532d;
-            --success-dark: #86efac;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      @keyframes slideInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
         }
-
-        body {
-            background: 
-                linear-gradient(135deg, rgba(43, 57, 88, 0.9) 0%, rgba(43, 57, 88, 0.9) 100%),
-                url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1950&q=80') center/cover;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-            transition: all 0.3s ease;
-            position: relative;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-      
-        [data-theme="dark"] body {
-            background: 
-                linear-gradient(135deg, rgba(43, 57, 88, 0.9) 0%, rgba(43, 57, 88, 0.9) 100%),
-                url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1950&q=80') center/cover;
-        }
+      /* Background image attribution (optional) */
+      .bg-attribution {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        color: white;
+        font-size: 0.75rem;
+        opacity: 0.7;
+      }
 
+      .bg-attribution a {
+        color: white;
+        text-decoration: none;
+      }
 
+      /* Responsive Design */
+      @media (max-width: 480px) {
         .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 3rem 2.5rem;
-            border-radius: 24px;
-            box-shadow: 
-                var(--shadow-xl),
-                0 0 0 1px rgba(255, 255, 255, 0.1);
-            width: 100%;
-            max-width: 440px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        [data-theme="dark"] .login-container {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 24px 24px 0 0;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            color: var(--gray-700);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        [data-theme="dark"] .theme-toggle {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--gray-300);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow);
-        }
-
-        .light-mode-icon {
-            display: block;
-        }
-
-        .dark-mode-icon {
-            display: none;
-        }
-
-        [data-theme="dark"] .light-mode-icon {
-            display: none;
-        }
-
-        [data-theme="dark"] .dark-mode-icon {
-            display: block;
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+          padding: 2rem 1.5rem;
+          margin: 1rem;
+          backdrop-filter: blur(15px);
         }
 
         .auth-title {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.5rem;
+          font-size: 1.5rem;
         }
 
-        [data-theme="dark"] .auth-title {
-            color: var(--text-primary);
+        .logo {
+          font-size: 2rem;
         }
 
-        .auth-subtitle {
-            color: var(--gray-500);
-            font-size: 1rem;
+        body {
+          background-attachment: fixed;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .login-container {
+          padding: 1.5rem 1rem;
         }
 
-        [data-theme="dark"] .auth-subtitle {
-            color: var(--text-muted);
+        .theme-toggle {
+          top: 1rem;
+          right: 1rem;
+          width: 40px;
+          height: 40px;
         }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        [data-theme="dark"] .form-label {
-            color: var(--text-secondary);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            border: 2px solid var(--gray-200);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--gray-900);
-            backdrop-filter: blur(10px);
-        }
-
-        [data-theme="dark"] .form-input {
-            background: rgba(30, 41, 59, 0.8);
-            border-color: var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
-            transform: translateY(-1px);
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        [data-theme="dark"] .form-input:focus {
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
-            background: rgba(30, 41, 59, 0.95);
-        }
-
-        .form-input::placeholder {
-            color: var(--gray-400);
-        }
-
-        [data-theme="dark"] .form-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            padding: 1rem 1.5rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        [data-theme="dark"] .auth-footer {
-            border-top-color: var(--border-color);
-        }
-
-        .register-link {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        [data-theme="dark"] .register-link {
-            color: var(--text-muted);
-        }
-
-        .register-link a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .register-link a:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-
-        .messages {
-            margin-bottom: 1.5rem;
-        }
-
-        .alert {
-            padding: 1rem 1.25rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            border-left: 4px solid;
-            animation: slideInDown 0.3s ease;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        [data-theme="dark"] .alert {
-            background: rgba(30, 41, 59, 0.9);
-        }
-
-        .alert-error {
-            color: var(--error-dark);
-            border-left-color: var(--error-dark);
-        }
-
-        .alert-success {
-            color: var(--success-dark);
-            border-left-color: var(--success-dark);
-        }
-
-        .alert-warning {
-            color: var(--warning-dark);
-            border-left-color: var(--warning-dark);
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--gray-400);
-            cursor: pointer;
-            padding: 0.25rem;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 4px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        [data-theme="dark"] .password-toggle {
-            background: rgba(30, 41, 59, 0.8);
-        }
-
-        .password-input-container {
-            position: relative;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Background image attribution (optional) */
-        .bg-attribution {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            color: white;
-            font-size: 0.75rem;
-            opacity: 0.7;
-        }
-
-        .bg-attribution a {
-            color: white;
-            text-decoration: none;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 2rem 1.5rem;
-                margin: 1rem;
-                backdrop-filter: blur(15px);
-            }
-            
-            .auth-title {
-                font-size: 1.5rem;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-
-            body {
-                background-attachment: fixed;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .login-container {
-                padding: 1.5rem 1rem;
-            }
-            
-            .theme-toggle {
-                top: 1rem;
-                right: 1rem;
-                width: 40px;
-                height: 40px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Background Image Attribution (Optional) -->
     <div class="bg-attribution">
-        Photo by <a href="https://unsplash.com/@anniespratt" target="_blank">Annie Spratt</a> on Unsplash
+      Photo by
+      <a href="https://unsplash.com/@anniespratt" target="_blank"
+        >Annie Spratt</a
+      >
+      on Unsplash
     </div>
 
     <div class="login-container">
-        <!-- Theme Toggle -->
-        <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">
-            <span class="light-mode-icon">🌙</span>
-            <span class="dark-mode-icon">☀️</span>
-        </button>
+      <!-- Theme Toggle -->
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">
+        <span class="light-mode-icon">🌙</span>
+        <span class="dark-mode-icon">☀️</span>
+      </button>
 
-        <!-- Header -->
-        <div class="auth-header">
-            <div class="logo">BookBazar</div>
-            <h1 class="auth-title">Welcome Back</h1>
-            <p class="auth-subtitle">Sign in to your account to continue</p>
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="logo">BookBazar</div>
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to your account to continue</p>
+      </div>
+
+      <!-- Messages -->
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Login Form -->
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="id_username" class="form-label">Email Address</label>
+          <input
+            type="email"
+            name="username"
+            id="id_username"
+            class="form-input"
+            placeholder="Enter your email"
+            required
+            autofocus
+          />
         </div>
 
-        <!-- Messages -->
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <!-- Login Form -->
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="id_username" class="form-label">Email Address</label>
-                <input 
-                    type="email" 
-                    name="username" 
-                    id="id_username" 
-                    class="form-input" 
-                    placeholder="Enter your email"
-                    required 
-                    autofocus
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="id_password" class="form-label">Password</label>
-                <div class="password-input-container">
-                    <input 
-                        type="password" 
-                        name="password" 
-                        id="id_password" 
-                        class="form-input" 
-                        placeholder="Enter your password"
-                        required
-                    >
-                    <button type="button" class="password-toggle" id="passwordToggle">
-                        👁️
-                    </button>
-                </div>
-            </div>
-
-            <button type="submit" class="btn">
-                Sign In
+        <div class="form-group">
+          <label for="id_password" class="form-label">Password</label>
+          <div class="password-input-container">
+            <input
+              type="password"
+              name="password"
+              id="id_password"
+              class="form-input"
+              placeholder="Enter your password"
+              required
+            />
+            <button type="button" class="password-toggle" id="passwordToggle">
+              👁️
             </button>
-        </form>
-
-        <!-- Footer -->
-        <div class="auth-footer">
-            <p class="register-link">
-                Don't have an account? 
-                <a href="/users/register/">Create an account</a>
-            </p>
+          </div>
         </div>
+
+        <!-- Forgot Password Link -->
+        <div class="forgot-password-container">
+          <a
+            href="{% url 'users:password_reset' %}"
+            class="forgot-password-link"
+          >
+            Forgot your password?
+          </a>
+        </div>
+
+        <button type="submit" class="btn">Sign In</button>
+      </form>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        <p class="register-link">
+          Don't have an account?
+          <a href="/users/register/">Create an account</a>
+        </p>
+      </div>
     </div>
 
     <script>
-        // Theme Toggle Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggle = document.getElementById('themeToggle');
-            const currentTheme = localStorage.getItem('theme');
-            
-            // Check for saved theme or prefer-color-scheme
-            if (currentTheme === 'dark' || 
-                (currentTheme === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-            }
-            
-            // Toggle theme
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                
-                if (currentTheme === 'light') {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    localStorage.setItem('theme', 'light');
-                }
-            });
+      // Theme Toggle Functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const currentTheme = localStorage.getItem("theme");
 
-            // Password Toggle Functionality
-            const passwordToggle = document.getElementById('passwordToggle');
-            const passwordInput = document.getElementById('id_password');
-            
-            passwordToggle.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                passwordToggle.textContent = type === 'password' ? '👁️' : '🔒';
-            });
+        // Check for saved theme or prefer-color-scheme
+        if (
+          currentTheme === "dark" ||
+          (currentTheme === null &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
 
-            // Listen for system theme changes
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (!localStorage.getItem('theme')) {
-                    if (e.matches) {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                    } else {
-                        document.documentElement.setAttribute('data-theme', 'light');
-                    }
-                }
-            });
+        // Toggle theme
+        themeToggle.addEventListener("click", function () {
+          const currentTheme =
+            document.documentElement.getAttribute("data-theme");
+
+          if (currentTheme === "light") {
+            document.documentElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+          } else {
+            document.documentElement.setAttribute("data-theme", "light");
+            localStorage.setItem("theme", "light");
+          }
         });
+
+        // Password Toggle Functionality
+        const passwordToggle = document.getElementById("passwordToggle");
+        const passwordInput = document.getElementById("id_password");
+
+        passwordToggle.addEventListener("click", function () {
+          const type =
+            passwordInput.getAttribute("type") === "password"
+              ? "text"
+              : "password";
+          passwordInput.setAttribute("type", type);
+          passwordToggle.textContent = type === "password" ? "👁️" : "🔒";
+        });
+
+        // Listen for system theme changes
+        window
+          .matchMedia("(prefers-color-scheme: dark)")
+          .addEventListener("change", (e) => {
+            if (!localStorage.getItem("theme")) {
+              if (e.matches) {
+                document.documentElement.setAttribute("data-theme", "dark");
+              } else {
+                document.documentElement.setAttribute("data-theme", "light");
+              }
+            }
+          });
+      });
     </script>
-</body>
+  </body>
 </html>

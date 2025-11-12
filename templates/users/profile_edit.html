@@ -645,11 +645,15 @@
                         <span class="menu-icon">👤</span>
                         <span class="menu-text">Edit Profile</span>
                     </a>
-                    <a href="#" class="menu-item">
+                                       <a href="{% url 'users:change_password' %}" class="menu-item">
+                        <span class="menu-icon">🔒</span>
+                        <span class="menu-text">Change Password</span>
+                    </a>
+                    <a href="{% url 'eco:shipping-address' %}" class="menu-item">
                         <span class="menu-icon">📦</span>
                         <span class="menu-text">Shipping Address</span>
                     </a>
-                    <a href="#" class="menu-item">
+                    <a href="{% url 'eco:wish-summary' %}" class="menu-item">
                         <span class="menu-icon">❤️</span>
                         <span class="menu-text">Wishlist</span>
                         <span class="menu-badge">3</span>

@@ -1,13 +1,14 @@
 # users/views.py
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm  # Built-in form
+from django.contrib.auth.forms import AuthenticationForm
 from django.views import generic
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm, ProfileEditForm
 from .models import UserProfile
+
 
 # Class-based view for registration (keep your existing one)
 class RegisterView(generic.CreateView):
@@ -105,7 +106,68 @@ def profile_edit_view(request):
 
 @login_required
 def change_password_view(request):
-    """Change password view"""
+    """Change password view with proper form handling"""
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # Validate that all fields are provided
+        if not all([current_password, new_password, confirm_password]):
+            messages.error(request, "All fields are required.")
+            return render(request, 'users/change_password.html', {
+                'user': request.user,
+                'categories': [],
+                'featured_books': [],
+            })
+        
+        # Check if new passwords match
+        if new_password != confirm_password:
+            messages.error(request, "New passwords don't match.")
+            return render(request, 'users/change_password.html', {
+                'user': request.user,
+                'categories': [],
+                'featured_books': [],
+            })
+        
+        # Check current password
+        if not request.user.check_password(current_password):
+            messages.error(request, "Current password is incorrect.")
+            return render(request, 'users/change_password.html', {
+                'user': request.user,
+                'categories': [],
+                'featured_books': [],
+            })
+        
+        # Validate password strength (optional but recommended)
+        if len(new_password) < 8:
+            messages.error(request, "Password must be at least 8 characters long.")
+            return render(request, 'users/change_password.html', {
+                'user': request.user,
+                'categories': [],
+                'featured_books': [],
+            })
+        
+        # Change the password
+        try:
+            request.user.set_password(new_password)
+            request.user.save()
+            
+            # Update session to prevent logout
+            update_session_auth_hash(request, request.user)
+            
+            messages.success(request, "Password changed successfully!")
+            return redirect('users:profile')
+            
+        except Exception as e:
+            messages.error(request, "An error occurred while changing your password.")
+            return render(request, 'users/change_password.html', {
+                'user': request.user,
+                'categories': [],
+                'featured_books': [],
+            })
+    
+    # GET request - just render the template
     context = {
         'user': request.user,
         'categories': [],
