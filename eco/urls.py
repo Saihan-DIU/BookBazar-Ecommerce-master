@@ -22,6 +22,10 @@ urlpatterns = [
     path('add-to-cart/<slug:slug>/', views.add_to_cart, name='add-to-cart-legacy'),
     path('remove-from-cart/<slug:slug>/', views.remove_from_cart_legacy, name='remove-from-cart-legacy'),
     path('remove-single-item-from-cart/<slug:slug>/', views.remove_single_item_from_cart, name='remove-single-item-from-cart'),
+
+        # ==================== SHIPPING ADDRESS VALIDATION ====================
+    path('check-shipping-address/', views.check_shipping_address, name='check-shipping-address'),  # ADD THIS LINE
+    
     
     # ==================== CHECKOUT & PAYMENT ====================
     path('checkout/', views.Checkout.as_view(), name='checkout'),

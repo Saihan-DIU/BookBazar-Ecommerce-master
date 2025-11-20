@@ -379,6 +379,25 @@ def is_valid_form(values):
             valid = False
     return valid
 
+@login_required
+def check_shipping_address(request):
+    """Check if user has a default shipping address"""
+    try:
+        has_address = Address.objects.filter(
+            user=request.user, 
+            address_type='S', 
+            default=True
+        ).exists()
+        
+        return JsonResponse({
+            'has_shipping_address': has_address
+        })
+    except Exception as e:
+        return JsonResponse({
+            'has_shipping_address': False,
+            'error': str(e)
+        })
+
 class Checkout(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
@@ -389,6 +408,17 @@ class Checkout(LoginRequiredMixin, View):
             if not cart_items:
                 messages.info(self.request, "Your cart is empty")
                 return redirect("eco:cart")
+            
+            # Check if user has a default shipping address
+            shipping_address_qs = Address.objects.filter(
+                user=self.request.user,
+                address_type='S',
+                default=True
+            )
+            
+            if not shipping_address_qs.exists():
+                messages.warning(self.request, "Please set up your default shipping address before checkout.")
+                return redirect('eco:shipping-address')
                 
             form = CheckoutForm()
             context = {
@@ -396,17 +426,9 @@ class Checkout(LoginRequiredMixin, View):
                 'couponform': CouponForm(),
                 'cart': cart,
                 'cart_items': cart_items,
-                'DISPLAY_COUPON_FORM': True
+                'DISPLAY_COUPON_FORM': True,
+                'default_shipping_address': shipping_address_qs[0]
             }
-
-            shipping_address_qs = Address.objects.filter(
-                user=self.request.user,
-                address_type='S',
-                default=True
-            )
-            if shipping_address_qs.exists():
-                context.update(
-                    {'default_shipping_address': shipping_address_qs[0]})
 
             billing_address_qs = Address.objects.filter(
                 user=self.request.user,
@@ -431,6 +453,17 @@ class Checkout(LoginRequiredMixin, View):
             if not cart_items:
                 messages.info(self.request, "Your cart is empty")
                 return redirect("eco:cart")
+            
+            # Check if user has a default shipping address
+            shipping_address_qs = Address.objects.filter(
+                user=self.request.user,
+                address_type='S',
+                default=True
+            )
+            
+            if not shipping_address_qs.exists():
+                messages.warning(self.request, "Please set up your default shipping address before checkout.")
+                return redirect('eco:shipping-address')
                 
             if form.is_valid():
                 # Process shipping address

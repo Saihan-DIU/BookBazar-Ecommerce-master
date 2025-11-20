@@ -1,239 +1,491 @@
 {% extends "eco/base.html" %}
 
-{% load static %}
 {% block content %}
+<style>
+    .checkout-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+        animation: fadeInUp 0.6s ease-out;
+    }
 
+    .checkout-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
 
-<div id="all">
-  <div id="content">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <!-- breadcrumb-->
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="{% url 'eco:EcoIndex' %}">Home</a></li>
-              <li aria-current="page" class="breadcrumb-item active">Checkout - Delivery method</li>
-            </ol>
-          </nav>
-        </div>
-        <div id="checkout" class="col-lg-9">
-          <div class="box">
+    .checkout-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
 
-                  <form method="POST" class="card-body">
-                    {% csrf_token %}
-      
-                    <h3>Shipping address</h3>
-      
-                    <div class='hideable_shipping_form'>
-      
-                      <div class="md-form mb-3">
-                        <label for="shipping_address" class="">Address</label>
-                        <input type='text' placeholder='1234 Main St' id='shipping_address' name='shipping_address' class='form-control' />
-                    
-                      </div>
-      
-                      <div class="md-form mb-3">
-                        <label for="shipping_address2" class="">Address 2 (optional)</label>
-                        <input type='text' placeholder='Apartment or suite' id='shipping_address2' name='shipping_address2' class='form-control' />
-                     
-                      </div>
-      
-                      <div class="row">
-                        <div class="col-lg-4 col-md-12 mb-4">
-                          <label for="country">Country</label>
-                          {{ form.shipping_country }}
-                          <div class="invalid-feedback">
-                            Please select a valid country.
-                          </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 mb-4">
-                          <label for="shipping_zip">Zip</label>
-                          <input type='text' placeholder='Zip code' id='shipping_zip' name='shipping_zip' class='form-control' />
-                          <div class="invalid-feedback">
-                            Zip code required.
-                          </div>
-                        </div>
-                      </div>
-      
-                      <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" name="same_billing_address" id="same_billing_address">
-                        <label class="custom-control-label" for="same_billing_address">Billing address is the same as my shipping address</label>
-                      </div>
-                      <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" name="set_default_shipping" id="set_default_shipping">
-                        <label class="custom-control-label" for="set_default_shipping">Save as default shipping address</label>
-                      </div>
-      
-                    </div>
-      
-                    {% if default_shipping_address %}
-                    <div class="custom-control custom-checkbox">
-                      <input type="checkbox" class="custom-control-input" name="use_default_shipping" id="use_default_shipping">
-                      <label class="custom-control-label" for="use_default_shipping">Use default shipping address: {{ default_shipping_address.street_address|truncatechars:10 }}</label>
-                    </div>
-                    {% endif %}
-      
-                    <hr>
-      
-                    <h3>Billing address</h3>
-      
-                    <div class='hideable_billing_form'>
-                      <div class="md-form mb-3">
-                        <label for="billing_address" class="">Address</label>
-                        <input type='text' placeholder='1234 Main St' id='billing_address' name='billing_address' class='form-control' />
-                      
-                      </div>
-      
-                      <div class="md-form mb-3">
-                        <label for="billing_address2" class="">Address 2 (optional)</label>
-                        <input type='text' placeholder='Apartment or suite' id='billing_address2' name='billing_address2' class='form-control' />
-                      
-                      </div>
-      
-                      <div class="row">
-                        <div class="col-lg-4 col-md-12 mb-4">
-                          <label for="country">Country</label>
-                          {{ form.billing_country }}
-                          <div class="invalid-feedback">
-                            Please select a valid country.
-                          </div>
-                        </div>
-      
-                        <div class="col-lg-4 col-md-6 mb-4">
-                          <label for="billing_zip">Zip</label>
-                          <input type='text' placeholder='Zip code' id='billing_zip' name='billing_zip' class='form-control' />
-                          <div class="invalid-feedback">
-                            Zip code required.
-                          </div>
-                        </div>
-      
-                      </div>
-      
-                      <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" name="set_default_billing" id="set_default_billing">
-                        <label class="custom-control-label" for="set_default_billing">Save as default billing address</label>
-                      </div>
-      
-                    </div>
-      
-                    {% if default_billing_address %}
-                    <div class="custom-control custom-checkbox">
-                      <input type="checkbox" class="custom-control-input" name="use_default_billing" id="use_default_billing">
-                      <label class="custom-control-label" for="use_default_billing">Use default billing address: {{ default_billing_address.street_address|truncatechars:10 }}</label>
-                    </div>
-                    {% endif %}
-                    <hr>
-      
-                    <h3>Payment option</h3>
-      
-                    <div class="d-block my-3">
-                      {% for value, name in form.fields.payment_option.choices %}
-                      <div class="custom-control custom-radio">
-                        <input id="{{ name }}" name="payment_option" value="{{ value }}" type="radio" class="custom-control-input" required>
-                        <label class="custom-control-label" for="{{ name }}">{{ name }}</label>
-                      </div>
-                      {% endfor %}
-                    </div>
-      
-                    <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-      
-                  </form>
-      
-                </div>
-                <!-- /.box-->
-              </div>
+    .checkout-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+    }
 
+    .checkout-grid {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 3rem;
+    }
 
+    /* Shipping Address Section */
+    .shipping-section {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        margin-bottom: 2rem;
+    }
 
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border);
+    }
 
-              <!-- /.col-lg-9-->
-              <div class="col-lg-3">
-                <div id="order-summary" class="box">
-                  <div class="box-header">
-                    <h3 class="mb-0">Order summary</h3>
-                  </div>
-                  <p class="text-muted">Shipping and additional costs are calculated based on the values you have entered.</p>
-                  <div class="table-responsive">
-                    <table class="table">
-                      <tbody>
-                        <tr>
-                          <td>Order subtotal</td>
-                     
-                          {% if order.get_total %}
-                          <th>${{ order.get_total|floatformat:2 }}</th>    
-                          {% endif %}     
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
 
-                        </tr>
-                        <tr>
-                          <td>Shipping</td>
-                          <th>$0.00</th>
-                        </tr>
-                        <tr>
-                          <td>Coupon</td>
-                          {% if order.coupon %}
-                              <th class="text-success">-${{ order.coupon.amount }}</th> 
-                          {% endif %}
-                        </tr>
-    
-    
-                        <tr class="total">
-                          <td>Total</td>
-                  
-    
-                          {% if order.get_total_full %}
-                          <th>${{ order.get_total_full|floatformat:2 }}</th>
-                                         
-                     {% endif %}      
-                                         
-             
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-  
-    
-    
-              </div>
-              <!-- /.col-md-3-->
-    
-        
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin: 0;
+    }
 
-              </div>
-        </div>
-      </div>
+    .address-display {
+        background: var(--promo-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 2px solid var(--success);
+        margin-bottom: 1.5rem;
+    }
+
+    .address-line {
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .address-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+        color: var(--primary);
+    }
+
+    .default-badge {
+        background: var(--success);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 1rem;
+    }
+
+    .change-address-btn {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .change-address-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* Order Summary */
+    .order-summary {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        position: sticky;
+        top: 2rem;
+        height: fit-content;
+    }
+
+    .summary-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+        text-align: center;
+    }
+
+    .cart-items {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 6px;
+        object-fit: cover;
+        border: 1px solid var(--border);
+    }
+
+    .item-details {
+        flex: 1;
+    }
+
+    .item-name {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 0.9rem;
+    }
+
+    .item-quantity {
+        color: var(--gray);
+        font-size: 0.8rem;
+    }
+
+    .summary-line {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .summary-line.total {
+        border-top: 2px solid var(--border);
+        border-bottom: none;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-top: 1rem;
+    }
+
+    /* Payment Section */
+    .payment-section {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        margin-bottom: 2rem;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .payment-method {
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--bg-color);
+    }
+
+    .payment-method:hover {
+        border-color: var(--primary);
+    }
+
+    .payment-method.selected {
+        border-color: var(--primary);
+        background: rgba(37, 99, 235, 0.05);
+    }
+
+    .payment-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .payment-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Pay Now Button */
+    .pay-now-btn {
+        width: 100%;
+        padding: 1.25rem 2rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .pay-now-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+    }
+
+    .pay-now-btn:disabled {
+        background: var(--gray);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .security-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: var(--success-light);
+        border: 1px solid var(--success);
+        border-radius: 8px;
+        margin-top: 1rem;
+        color: var(--success-dark);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+        .checkout-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+            position: static;
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .checkout-container {
+            padding: 1rem;
+        }
+
+        .payment-methods {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="checkout-container">
+    <!-- Checkout Header -->
+    <div class="checkout-header">
+        <h1 class="checkout-title">Checkout</h1>
+        <p class="checkout-subtitle">Review your order and complete payment</p>
     </div>
-   
 
-    {% block extra_scripts %}
-    <script>
+    <div class="checkout-grid">
+        <!-- Left Column - Shipping & Payment -->
+        <div class="checkout-forms">
+            <!-- Shipping Address -->
+            <div class="shipping-section">
+                <div class="section-header">
+                    <div class="section-icon">🚚</div>
+                    <h2 class="section-title">Shipping Address</h2>
+                </div>
 
-      var hideable_shipping_form = $('.hideable_shipping_form');
-      var hideable_billing_form = $('.hideable_billing_form');
-      
-      var use_default_shipping = document.querySelector("input[name=use_default_shipping]");
-      var use_default_billing = document.querySelector("input[name=use_default_billing]");
-      
-      use_default_shipping.addEventListener('change', function() {
-        if (this.checked) {
-          hideable_shipping_form.hide();
-        } else {
-          hideable_shipping_form.show();
-        }
-      })
-      
-      use_default_billing.addEventListener('change', function() {
-        if (this.checked) {
-          hideable_billing_form.hide();
-        } else {
-          hideable_billing_form.show();
-        }
-      })
+                {% if default_address %}
+                <div class="address-display">
+                    <div class="address-name">
+                        {{ default_address.street_address }}
+                        <span class="default-badge">DEFAULT</span>
+                    </div>
+                    <div class="address-line">{{ default_address.apartment_address }}</div>
+                    <div class="address-line">{{ default_address.city }}, {{ default_address.state }} {{ default_address.zip_code }}</div>
+                    <div class="address-line">{{ default_address.country }}</div>
+                </div>
+                {% endif %}
 
-    </script>
+                <a href="{% url 'eco:shipping-address' %}?from_checkout=true" class="change-address-btn">
+                    <i class="fas fa-edit"></i>
+                    Change Shipping Address
+                </a>
+            </div>
 
-    {% endblock extra_scripts %}
+            <!-- Payment Method -->
+            <div class="payment-section">
+                <div class="section-header">
+                    <div class="section-icon">💳</div>
+                    <h2 class="section-title">Payment Method</h2>
+                </div>
 
-{% endblock content %}
+                <div class="payment-methods">
+                    <div class="payment-method selected" data-method="card">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-name">Credit Card</div>
+                    </div>
+                    <div class="payment-method" data-method="paypal">
+                        <div class="payment-icon">🔵</div>
+                        <div class="payment-name">PayPal</div>
+                    </div>
+                    <div class="payment-method" data-method="stripe">
+                        <div class="payment-icon">⚡</div>
+                        <div class="payment-name">Stripe</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Order Summary -->
+        <div class="order-summary">
+            <h3 class="summary-title">Order Summary</h3>
+
+            <!-- Cart Items -->
+            <div class="cart-items">
+                {% for item in cart_items %}
+                <div class="cart-item">
+                    <img src="{{ item.book.image_url }}" alt="{{ item.book.title }}" class="item-image">
+                    <div class="item-details">
+                        <div class="item-name">{{ item.book.title|truncatewords:4 }}</div>
+                        <div class="item-price">${{ item.final_price|floatformat:2 }}</div>
+                        <div class="item-quantity">Qty: {{ item.quantity }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="price-breakdown">
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <span>${{ cart.subtotal|floatformat:2 }}</span>
+                </div>
+                
+                {% if cart.total_discount > 0 %}
+                <div class="summary-line">
+                    <span>Discount</span>
+                    <span style="color: var(--success);">-${{ cart.total_discount|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="summary-line">
+                    <span>Shipping</span>
+                    <span>FREE</span>
+                </div>
+                
+                <div class="summary-line total">
+                    <span>Total</span>
+                    <span>${{ cart.grand_total|floatformat:2 }}</span>
+                </div>
+            </div>
+
+            <!-- Pay Now Button -->
+            <button class="pay-now-btn" id="payNowButton">
+                <i class="fas fa-lock"></i>
+                Pay Now - ${{ cart.grand_total|floatformat:2 }}
+            </button>
+
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure SSL Encryption • Your data is protected</span>
+            </div>
+
+            <p style="text-align: center; color: var(--gray); font-size: 0.8rem; margin-top: 1rem;">
+                By completing your purchase, you agree to our Terms of Service and Privacy Policy.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Payment method selection
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', function() {
+                // Remove selected class from all methods
+                paymentMethods.forEach(m => m.classList.remove('selected'));
+                // Add selected class to clicked method
+                this.classList.add('selected');
+            });
+        });
+
+        // Pay Now button handler
+        const payNowButton = document.getElementById('payNowButton');
+        payNowButton.addEventListener('click', function() {
+            // Add loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Payment...';
+            this.disabled = true;
+
+            // Get selected payment method
+            const selectedMethod = document.querySelector('.payment-method.selected');
+            const methodType = selectedMethod ? selectedMethod.getAttribute('data-method') : 'card';
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                alert(`Payment processed successfully via ${methodType.toUpperCase()}! Thank you for your purchase.`);
+                // In real implementation, redirect to order confirmation
+                // window.location.href = '/order-confirmation/';
+                
+                // Reset button (for demo)
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %}

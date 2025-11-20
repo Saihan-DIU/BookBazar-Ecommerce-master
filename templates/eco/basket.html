@@ -417,6 +417,18 @@
     color: var(--button-text-color, #2c3e50) !important;
 }
 
+.checkout-btn:disabled {
+    background: var(--meta-text);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.checkout-btn.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
     .checkout-btn i {
         margin-left: 8px;
     }
@@ -605,6 +617,16 @@
         background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
         border-left: 4px solid var(--primary-color);
     }
+
+    /* Loading spinner */
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
 {% endblock %}
 
@@ -713,7 +735,7 @@
                 <span class="summary-value">FREE</span>
             </div>
             
-           
+            <!-- REMOVED TAX ROW -->
             
             <div class="summary-total">
                 <span class="summary-label">Total</span>
@@ -729,7 +751,8 @@
     <div id="promoMessage" style="margin-top: 10px; font-size: 14px;"></div>
 </div>
             
-            <button class="checkout-btn" onclick="window.location.href='{% url 'eco:checkout' %}'">
+            <!-- UPDATED CHECKOUT BUTTON -->
+            <button class="checkout-btn" id="checkoutButton" onclick="proceedToCheckout()">
                 Proceed to Checkout <i class="fas fa-arrow-right"></i>
             </button>
             
@@ -751,6 +774,47 @@
     function getCSRFToken() {
         const csrfToken = document.querySelector('meta[name="csrf-token"]');
         return csrfToken ? csrfToken.getAttribute('content') : '';
+    }
+
+    // ===== CHECKOUT FLOW WITH SHIPPING ADDRESS VALIDATION =====
+    async function proceedToCheckout() {
+        try {
+            // Show loading state
+            const checkoutBtn = document.getElementById('checkoutButton');
+            const originalText = checkoutBtn.innerHTML;
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+            checkoutBtn.disabled = true;
+            checkoutBtn.classList.add('loading');
+
+            // Check if user has shipping address
+            const response = await fetch('{% url "eco:check-shipping-address" %}', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                }
+            });
+
+            const data = await response.json();
+            
+            if (data.has_shipping_address) {
+                // Redirect to checkout page
+                window.location.href = '{% url "eco:checkout" %}';
+            } else {
+                // Show message and redirect to shipping address page
+                alert('Please set up your shipping address before checkout.');
+                window.location.href = '{% url "eco:shipping-address" %}?from_checkout=true';
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            
+            // Reset button
+            const checkoutBtn = document.getElementById('checkoutButton');
+            checkoutBtn.innerHTML = originalText;
+            checkoutBtn.disabled = false;
+            checkoutBtn.classList.remove('loading');
+        }
     }
 
     // Update cart item quantity
