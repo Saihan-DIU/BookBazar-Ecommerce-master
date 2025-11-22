@@ -18,8 +18,7 @@ A **full-featured E-Commerce web application** built with **Django & Python**. T
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/Rafi1115/Django-Ecommerce-Web-Application.git
-   cd Django-Ecommerce-Web-Application
+   git clone https://github.com/Saihan-DIU/BookBazar-Ecommerce-master.git
    ```
 
 2. **Create a virtual environment & activate it**  
@@ -62,6 +61,6 @@ This project is open-source and available under the **MIT License**.
 
 ---
 
-🔗 **Live Demo (if available):** [https://rafi456.pythonanywhere.com/]  
-📌 **GitHub Repository:** [https://github.com/Rafi1115/-Django-Ecommerce-Web-Application]  
-📌 **Developer:** Rafi | MarsWebTech 🚀
+🔗 **Live Demo (if available):**  
+📌 **GitHub Repository:** [https://github.com/Saihan-DIU/BookBazar-Ecommerce-master.git]
+📌 **Developer:** Saihan | DIU 🚀
